@@ -1,10 +1,18 @@
 #include "Game.h"
+#include "Player.h"
+
+#include <algorithm>
 
 void Game::Initialize() 
 {
     SDL_Log("Initializing game...", SDL_LOG_PRIORITY_INFO);
 
     m_renderer.Initialize();
+
+    // Add player
+    auto player = std::make_shared<Player>();
+    player->SetMainTexture(m_renderer.LoadTexture("assets/player.png"));
+    m_entities.push_back(player);
 }
 
 void Game::Run() 
@@ -22,14 +30,25 @@ void Game::Run()
         auto elapsedTime = currentTime - previousTime;
         lag += elapsedTime;
 
-        m_inputState.PollForInput();
+        m_state.GetInputState().PollForInput();
 
         while (lag >= TIME_PER_TICK)
         {
             // TODO: Update game state based on user input
             // TODO: Update game objects
 
-            if (m_inputState.quit)
+            for (auto e : m_entities) 
+            {
+                e->Update(m_state);
+            }
+
+            // Cleanup in-active entities
+            for (int i = 0; i < m_entities.size(); i++)
+            {
+                m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](std::shared_ptr<Entity> e) { return !e->IsActive(); }), m_entities.end());
+            }
+ 
+            if (m_state.GetInputState().quit)
             {
                 m_isRunning = false;
             }
@@ -39,10 +58,15 @@ void Game::Run()
 
         m_renderer.Clear();
 
-        // TODO: Render stuff
+        // Render objects
+        for (auto &e : m_entities)
+        {
+            e->Render(m_renderer);
+        }
 
         // Draw cursor
-        m_renderer.RenderRectangle({ m_inputState.cursor, float(TEXTURE_SCALE)}, FG_COLOR.r, FG_COLOR.g, FG_COLOR.b, FG_COLOR.r);
+        Point cursorPos = m_state.GetInputState().cursor;
+        m_renderer.RenderRectangle({ cursorPos, float(TEXTURE_SCALE)}, FG_COLOR.r, FG_COLOR.g, FG_COLOR.b, FG_COLOR.r);
         
         m_renderer.Present();
     }

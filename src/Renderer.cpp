@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+const std::string WINDOW_TITLE = "Virusphobia";
+
 static SDL_Rect ConvertRect(Rectangle r, bool flipAndScale = false)
 {
     SDL_Rect n = {(int)std::round(r.pos.x),
@@ -34,7 +36,7 @@ void SDLRenderer::Initialize()
     }
 
     // Create the SDL Window
-    m_sdlWindow = SDL_CreateWindow("SDL DEMO",
+    m_sdlWindow = SDL_CreateWindow(WINDOW_TITLE.c_str(),
                                    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                    RESOLUTION_W, RESOLUTION_H,
                                    SDL_WINDOW_SHOWN);
@@ -107,7 +109,7 @@ void SDLRenderer::RenderWholeTextureRotate(std::shared_ptr<Texture> texture, Rec
 {
     SDL_Rect d = ConvertRect(dest, true);
     SDL_Point c = {(int)center.x, (int)center.y};
-    SDL_RenderCopyEx(m_sdlRenderer, texture->GetSDLTexture(), NULL, &d, angle, &c, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(m_sdlRenderer, texture->GetSDLTexture(), NULL, &d, -angle, &c, SDL_FLIP_NONE);
 }
 
 void SDLRenderer::RenderTexture(std::shared_ptr<Texture> texture, Rectangle source, Rectangle dest)

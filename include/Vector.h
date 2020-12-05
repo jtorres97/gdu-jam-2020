@@ -12,10 +12,12 @@ public:
     Point GetPoint();
     float GetMagnitude();
     float GetAngle();
+    bool NonZero();
 
     Vector2D Scale(float scaleFactor);
     Vector2D Normalize();
     Vector2D Add(Vector2D v);
+    Vector2D Subtract(Vector2D v);
     Vector2D Rotate(float angle);
 
 private:

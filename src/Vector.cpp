@@ -40,6 +40,11 @@ float Vector2D::GetAngle()
     return m_angle;
 }
 
+bool Vector2D::NonZero()
+{
+    return std::abs(m_magnitude) > 0.0001;
+}
+
 Vector2D Vector2D::Scale(float scaleFactor)
 {
     return Vector2D(m_magnitude * scaleFactor, m_angle);
@@ -53,6 +58,11 @@ Vector2D Vector2D::Normalize()
 Vector2D Vector2D::Add(Vector2D v)
 {
     return Vector2D(GetPoint() + v.GetPoint());
+}
+
+Vector2D Vector2D::Subtract(Vector2D v)
+{
+    return Vector2D(GetPoint() - v.GetPoint());
 }
 
 Vector2D Vector2D::Rotate(float angle)
