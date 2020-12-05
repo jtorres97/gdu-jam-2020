@@ -35,6 +35,8 @@ void SDLRenderer::Initialize()
         exit(1);
     }
 
+    TTF_Init();
+
     // Create the SDL Window
     m_sdlWindow = SDL_CreateWindow(WINDOW_TITLE.c_str(),
                                    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -129,7 +131,28 @@ void SDLRenderer::RenderTextureRotate(std::shared_ptr<Texture> texture, Rectangl
     SDL_RenderCopyEx(m_sdlRenderer, texture->GetSDLTexture(), &s, &d, -angle, &c, SDL_FLIP_NONE);
 }
 
-std::shared_ptr<Texture> SDLRenderer::LoadTexture(std::string fileName)
+void SDLRenderer::RenderFont(std::shared_ptr<Font> font, const std::string &text, Rectangle dest)
+{
+    SDL_Surface *s = TTF_RenderText_Blended(font->GetSDLFont(), text.c_str(), FG_COLOR);
+    SDL_Texture *t = SDL_CreateTextureFromSurface(m_sdlRenderer, s);
+
+    SDL_Rect r = ConvertRect(dest, true);
+
+    SDL_RenderCopy(m_sdlRenderer, t, NULL, &r);
+
+    SDL_FreeSurface(s);
+    SDL_DestroyTexture(t);
+
+    TTF_RenderText_Solid(font->GetSDLFont(), text.c_str(), FG_COLOR);
+}
+
+std::shared_ptr<Texture> SDLRenderer::LoadTexture(const std::string &fileName)
 {
     return std::make_shared<Texture>(IMG_LoadTexture(m_sdlRenderer, fileName.c_str()));
+}
+
+std::shared_ptr<Font> SDLRenderer::LoadFont(const std::string &fileName)
+{
+    TTF_Font *font = TTF_OpenFont(fileName.c_str(), 80);
+    return std::make_shared<Font>(font);
 }

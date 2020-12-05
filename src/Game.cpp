@@ -15,15 +15,13 @@ void Game::Initialize()
 
     m_renderer.Initialize();
 
+    m_UIFont = m_renderer.LoadFont("assets/EXEPixelPerfect.ttf");
+
     // Add player
     m_playerOne = std::make_shared<Player>();
     m_playerOne->SetMainTexture(m_renderer.LoadTexture("assets/player.png"));
 
-    // Add enemy spawner
-    auto spawner0 = std::make_shared<Spawner>(Point{100, 600}, m_enemies, m_projectiles);
-    spawner0->SetMainTexture(m_renderer.LoadTexture("assets/spawner.png"));
-    spawner0->SetEnemyTexture(m_renderer.LoadTexture("assets/enemy.png"));
-    m_spawners.push_back(spawner0);
+    Reset();
 }
 
 void Game::Run()
@@ -156,6 +154,13 @@ void Game::Render()
         p->Render(m_renderer);
     }
 
+    // Render the game over screen
+    if (m_state.status == GameStatus::GAME_OVER)
+    {
+        Rectangle textRect = {(WORLDSIZE_W - 600) / 2, (WORLDSIZE_H - 100) / 2, 600, 100};
+        m_renderer.RenderFont(m_UIFont, "GAME OVER", textRect);
+    }
+
     // Render cursor
     Point cursorPosition = m_state.GetInputState().cursor;
     m_renderer.RenderRectangle({cursorPosition, float(TEXTURE_SCALE), float(TEXTURE_SCALE)}, FG_COLOR.r, FG_COLOR.g, FG_COLOR.b, FG_COLOR.r);
@@ -193,6 +198,24 @@ void Game::Cleanup()
                            [](std::shared_ptr<Projectile> o) { return !o->IsActive(); }),
             m_projectiles.end());
     }
+}
+
+void Game::Reset()
+{
+    m_spawners.clear();
+    m_enemies.clear();
+    m_projectiles.clear();
+
+    // Add enemy spawner
+    auto spawner0 = std::make_shared<Spawner>(Point{100, 600}, m_enemies, m_projectiles);
+    spawner0->SetMainTexture(m_renderer.LoadTexture("assets/spawner.png"));
+    spawner0->SetEnemyTexture(m_renderer.LoadTexture("assets/enemy.png"));
+    m_spawners.push_back(spawner0);
+
+    auto spawner1 = std::make_shared<Spawner>(Point{800, 200}, m_enemies, m_projectiles);
+    spawner1->SetMainTexture(m_renderer.LoadTexture("assets/spawner.png"));
+    spawner1->SetEnemyTexture(m_renderer.LoadTexture("assets/enemy.png"));
+    m_spawners.push_back(spawner1);
 }
 
 void Game::HandlePlayerCollisions(std::shared_ptr<Projectile> projectile)

@@ -18,7 +18,7 @@ public:
 protected:
     std::shared_ptr<Texture> m_mainTexture;
     float m_moveSpeed = 1.0f;
-    float m_projectileSpeed = 10.0f;
+    float m_projectileSpeed = 8.0f;
 
     Timer m_fireTimer;
 
