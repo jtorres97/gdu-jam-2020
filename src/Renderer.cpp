@@ -31,11 +31,21 @@ void SDLRenderer::Initialize()
 {
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) != 0)
     {
-        SDL_Log("Failed to initialize SDL: ", std::string(SDL_GetError()));
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to initialize SDL: %s", SDL_GetError());
         exit(1);
     }
 
-    TTF_Init();
+    if (TTF_Init() != 0)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to initialize TTF: %s", TTF_GetError());
+        exit(1);
+    }
+
+    if (IMG_Init(IMG_INIT_PNG) == 0)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to initialize IMG: %s", IMG_GetError());
+        exit(1);
+    }
 
     // Create the SDL Window
     m_sdlWindow = SDL_CreateWindow(WINDOW_TITLE.c_str(),
@@ -56,7 +66,7 @@ void SDLRenderer::Initialize()
 
     if (m_sdlRenderer == NULL)
     {
-        SDL_Log("Failed to create SDL renderer: %s", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create SDL renderer: %s", SDL_GetError());
         exit(1);
     }
 
@@ -66,7 +76,7 @@ void SDLRenderer::Initialize()
     // Set the SDL blend mode to BLEND
     if (SDL_SetRenderDrawBlendMode(m_sdlRenderer, SDL_BLENDMODE_BLEND) != 0)
     {
-        SDL_Log("Failed to set SDL blend mode: %s", SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to set SDL blend mode: %s", SDL_GetError());
         exit(1);
     }
 
@@ -148,11 +158,27 @@ void SDLRenderer::RenderFont(std::shared_ptr<Font> font, const std::string &text
 
 std::shared_ptr<Texture> SDLRenderer::LoadTexture(const std::string &fileName)
 {
-    return std::make_shared<Texture>(IMG_LoadTexture(m_sdlRenderer, fileName.c_str()));
+    SDL_Log("Loading texture: %s", fileName.c_str());
+
+    SDL_Texture* tex = IMG_LoadTexture(m_sdlRenderer, fileName.c_str());
+
+    if (tex == nullptr)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load texture: %s", fileName.c_str());
+    }
+
+    return std::make_shared<Texture>(tex);
 }
 
 std::shared_ptr<Font> SDLRenderer::LoadFont(const std::string &fileName)
 {
+    SDL_Log("Loading font: %s", fileName.c_str());
     TTF_Font *font = TTF_OpenFont(fileName.c_str(), 80);
+
+    if (font == nullptr)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load font: %s", fileName.c_str());
+    }
+
     return std::make_shared<Font>(font);
 }
