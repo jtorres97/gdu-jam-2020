@@ -8,7 +8,7 @@
 class Enemy : public Entity
 {
 public:
-    Enemy(Point position);
+    Enemy(Point position, std::vector<std::shared_ptr<Projectile>> &projectiles);
 
     void Update(GameState& state) override;
     void Render(SDLRenderer& renderer) override;
@@ -22,5 +22,5 @@ protected:
 
     Timer m_fireTimer;
 
-    std::vector<std::shared_ptr<Projectile>> m_projectiles;
+    std::vector<std::shared_ptr<Projectile>>& m_projectiles;
 };

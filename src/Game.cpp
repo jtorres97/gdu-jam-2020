@@ -13,18 +13,18 @@ void Game::Initialize()
     // Add player
     auto player = std::make_shared<Player>();
     player->SetMainTexture(m_renderer.LoadTexture("assets/player.png"));
-    m_entities.push_back(player);
+    m_playerOne = player;
 
     // Add enemy spawners
-    auto spawner0 = std::make_shared<Spawner>(Point{100, 600});
+    auto spawner0 = std::make_shared<Spawner>(Point{100, 600}, m_enemies, m_projectiles);
     spawner0->SetMainTexture(m_renderer.LoadTexture("assets/spawner.png"));
     spawner0->SetEnemyTexture(m_renderer.LoadTexture("assets/enemy.png"));
-    m_entities.push_back(spawner0);
+    m_spawners.push_back(spawner0);
 
-    auto spawner1 = std::make_shared<Spawner>(Point{900, 600});
+    auto spawner1 = std::make_shared<Spawner>(Point{900, 600}, m_enemies, m_projectiles);
     spawner1->SetMainTexture(m_renderer.LoadTexture("assets/spawner.png"));
     spawner1->SetEnemyTexture(m_renderer.LoadTexture("assets/enemy.png"));
-    m_entities.push_back(spawner1);
+    m_spawners.push_back(spawner1);
 }
 
 void Game::Run() 
@@ -47,19 +47,13 @@ void Game::Run()
 
         while (lag >= TIME_PER_TICK)
         {
-            // TODO: Update game state based on user input
-            // TODO: Update game objects
-
-            for (auto e : m_entities) 
-            {
-                e->Update(m_state);
-            }
+            Update();
 
             // Cleanup in-active entities
-            for (int i = 0; i < m_entities.size(); i++)
-            {
-                m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](std::shared_ptr<Entity> e) { return !e->IsActive(); }), m_entities.end());
-            }
+            // for (int i = 0; i < m_entities.size(); i++)
+            // {
+            //     m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), [](std::shared_ptr<Entity> e) { return !e->IsActive(); }), m_entities.end());
+            // }
  
             if (m_state.GetInputState().quit)
             {
@@ -68,24 +62,60 @@ void Game::Run()
 
             lag -= TIME_PER_TICK;
         }
-
-        m_renderer.Clear();
-
-        // Render objects
-        for (auto &e : m_entities)
-        {
-            e->Render(m_renderer);
-        }
-
-        // Draw cursor
-        Point cursorPos = m_state.GetInputState().cursor;
-        m_renderer.RenderRectangle({ cursorPos, float(TEXTURE_SCALE)}, FG_COLOR.r, FG_COLOR.g, FG_COLOR.b, FG_COLOR.r);
-        
-        m_renderer.Present();
+        Render();
     }
 }
 
 void Game::Close()
 {
     SDL_Log("Closing game...", SDL_LOG_PRIORITY_INFO);
+}
+
+void Game::Update()
+{
+    m_playerOne->Update(m_state);
+
+    for (auto s : m_spawners)
+    {
+        s->Update(m_state);
+    }
+
+    for (auto e : m_enemies)
+    {
+        e->Update(m_state);
+    }
+
+    for (auto p : m_projectiles)
+    {
+        p->Update(m_state);
+    }
+}
+
+void Game::Render()
+{
+    m_renderer.Clear();
+
+    // Render objects
+    m_playerOne->Render(m_renderer);
+
+    for (auto s : m_spawners)
+    {
+        s->Render(m_renderer);
+    }
+
+    for (auto e : m_enemies)
+    {
+        e->Render(m_renderer);
+    }
+
+    for (auto p : m_projectiles)
+    {
+        p->Render(m_renderer);
+    }
+
+    // Render cursor
+    Point cursorPosition = m_state.GetInputState().cursor;
+    m_renderer.RenderRectangle({cursorPosition, float(TEXTURE_SCALE), float(TEXTURE_SCALE)}, FG_COLOR.r, FG_COLOR.g, FG_COLOR.b, FG_COLOR.r);
+
+    m_renderer.Present();
 }

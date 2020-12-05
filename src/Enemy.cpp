@@ -1,6 +1,6 @@
 #include "Enemy.h"
 
-Enemy::Enemy(Point position) : Entity(), m_fireTimer(300)
+Enemy::Enemy(Point position, std::vector<std::shared_ptr<Projectile>> &projectiles) : Entity(), m_fireTimer(300), m_projectiles(projectiles)
 {
     m_position = position;
     m_bound = { 48, 48 };
@@ -24,22 +24,10 @@ void Enemy::Update(GameState &state)
         m_projectiles.push_back(projectile);
         m_fireTimer.Reset();
     }
-
-    // Update projectiles
-    for (auto projectile : m_projectiles)
-    {
-        projectile->Update(state);
-    }
 }
 
 void Enemy::Render(SDLRenderer &renderer)
 {
-    // Render projectiles
-    for (auto projectile : m_projectiles)
-    {
-        projectile->Render(renderer);
-    }
-    
     renderer.RenderWholeTexture(m_mainTexture, GetHitBox());
 }
 
