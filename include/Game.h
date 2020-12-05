@@ -43,4 +43,5 @@ private:
     int startingTimeout = 1000;
     Timer m_fireTimer;
     Timer m_cleanupTimer;
+    EnemyDirection m_lastDirection = EnemyDirection::UNKNOWN;
 };

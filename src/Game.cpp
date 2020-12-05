@@ -93,28 +93,39 @@ void Game::Update()
     if (m_fireTimer.IsExpired())
     {
         // Fire from a random direction
-        Point p = {400, -20};
-        EnemyDirection dir = EnemyDirection::UP;
+        Point p;
+        EnemyDirection dir = m_lastDirection;
+        std::shared_ptr<Enemy> e = nullptr;
 
-        int rand = RandInt(4);
+        // Prevent directions from repeating
+        while (dir == m_lastDirection)
+        {
+            int rand = RandInt(4);
+            if (rand == 0)
+            {
+                p = {-20, 400};
+                dir = EnemyDirection::RIGHT;
+            }
+            else if (rand == 1)
+            {
+                p = {400, 820};
+                dir = EnemyDirection::DOWN;
+            }
+            else if (rand == 2)
+            {
+                p = {820, 400};
+                dir = EnemyDirection::LEFT;
+            }
+            else if (rand == 3)
+            {
+                p = {400, -20};
+                dir = EnemyDirection::UP;
+            }
+        }
 
-        if (rand == 0)
-        {
-            p = {-20, 400};
-            dir = EnemyDirection::RIGHT;
-        }
-        else if (rand == 1)
-        {
-            p = {400, 820};
-            dir = EnemyDirection::DOWN;
-        }
-        else if (rand == 2)
-        {
-            p = {820, 400};
-            dir = EnemyDirection::LEFT;
-        }
+        m_lastDirection = dir;
 
-        auto e = std::make_shared<Enemy>(p);
+        e = std::make_shared<Enemy>(p);
         e->SetMainTexture(m_enemyTexture);
         e->direction = dir;
 
