@@ -28,10 +28,6 @@ private:
     void Cleanup();
     void Reset();
 
-    // void HandlePlayerCollisions(std::shared_ptr<Projectile> projectile);
-    // void HandleEnemyCollisions(std::shared_ptr<Projectile> projectile);
-    // void HandleSpawnerCollisions(std::shared_ptr<Projectile> projectile);
-
     bool m_isRunning;
     GameState m_state;
     SDLRenderer m_renderer;
@@ -45,6 +41,6 @@ private:
     std::vector<std::shared_ptr<Enemy>> m_enemies;
 
     int startingTimeout = 1000;
-    Timer FireTimer;
+    Timer m_fireTimer;
     Timer m_cleanupTimer;
 };

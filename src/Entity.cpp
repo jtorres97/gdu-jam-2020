@@ -46,18 +46,3 @@ void Entity::SetVelocity(Vector2D velocity)
 {
     m_velocity = velocity;
 }
-
-void Entity::Damage(int damage)
-{
-    m_HP -= damage;
-
-    if (m_HP < 0)
-    {
-        m_HP = 0;
-    }
-}
-
-bool Entity::IsAlive()
-{
-    return m_HP > 0;
-}

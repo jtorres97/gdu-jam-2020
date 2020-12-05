@@ -24,6 +24,3 @@ private:
     float m_magnitude = 0.0;
     float m_angle = 0.0;
 };
-
-// Converts a combination of directions into a unit vector for movement at that angle
-Vector2D WASDToMovementVector(bool U, bool D, bool L, bool R);

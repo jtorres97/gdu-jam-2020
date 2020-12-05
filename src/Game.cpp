@@ -4,15 +4,10 @@
 
 #include <algorithm>
 
-bool CloseEnough(float a, float b)
-{
-    return (a > (b - 0.00001) && a < (b + 0.00001));
-}
-
-Game::Game() : m_cleanupTimer(5000), FireTimer(1000)
+Game::Game() : m_cleanupTimer(5000), m_fireTimer(1000)
 {
     m_cleanupTimer.Reset();
-    FireTimer.Reset();
+    m_fireTimer.Reset();
 }
 
 void Game::Initialize()
@@ -21,14 +16,15 @@ void Game::Initialize()
 
     m_renderer.Initialize();
 
+    // Load assets
     m_UIFont = m_renderer.LoadFont("assets/EXEPixelPerfect.ttf");
-
     m_overlayTexture = m_renderer.LoadTexture("assets/overlay.png");
     m_enemyTexture = m_renderer.LoadTexture("assets/enemy.png");
+    auto playerTexture = m_renderer.LoadTexture("assets/player.png");
 
     // Add player
     m_playerOne = std::make_shared<Player>();
-    m_playerOne->SetMainTexture(m_renderer.LoadTexture("assets/player.png"));
+    m_playerOne->SetMainTexture(playerTexture);
 
     Reset();
 }
@@ -50,7 +46,7 @@ void Game::Run()
         previousTime = currentTime;
         lag += elapsedTime;
 
-        m_state.GetInputState().PollForInput();
+        m_state.input.PollForInput();
 
         while (lag >= TIME_PER_TICK)
         {
@@ -62,7 +58,7 @@ void Game::Run()
                 m_cleanupTimer.Reset();
             }
 
-            if (m_state.GetInputState().quit)
+            if (m_state.input.quit)
             {
                 m_isRunning = false;
             }
@@ -82,7 +78,7 @@ void Game::Update()
 {
     if (m_state.status != GameStatus::RUNNING)
     {
-        if (m_state.GetInputState().fireMain)
+        if (m_state.input.select)
         {
             Reset();
             m_state.status = GameStatus::RUNNING;
@@ -94,7 +90,7 @@ void Game::Update()
 
     m_playerOne->Update(m_state);
 
-    if (FireTimer.IsExpired())
+    if (m_fireTimer.IsExpired())
     {
         // Fire from a random direction
         Point p = {400, -20};
@@ -127,10 +123,10 @@ void Game::Update()
         // Update rate as level increases
         if (m_state.score % 10 && m_state.score < 80)
         {
-            FireTimer.SetTimeout(startingTimeout - m_state.score * 10);
+            m_fireTimer.SetTimeout(startingTimeout - m_state.score * 10);
         }
 
-        FireTimer.Reset();
+        m_fireTimer.Reset();
     }
 
     for (auto e : m_enemies)
@@ -179,8 +175,11 @@ void Game::Render()
     m_renderer.RenderWholeTexture(m_overlayTexture, {0, 0, 800, 800});
 
     // Render score
-    Rectangle scoreRect = {(WORLDSIZE_W - 80) - 20, (WORLDSIZE_H - 60) - 20, 80, 60};
+    Rectangle scoreRect = {20, (WORLDSIZE_H - 60) - 20, 80, 60};
     m_renderer.RenderFont(m_UIFont, std::to_string(m_state.score), scoreRect);
+
+    Rectangle bestScoreRect = {(WORLDSIZE_W - 80) - 20, (WORLDSIZE_H - 60) - 20, 80, 60};
+    m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScore), bestScoreRect);
 
     // Render the game over screen
     if (m_state.status == GameStatus::GAME_OVER)
@@ -211,7 +210,14 @@ void Game::Cleanup()
 
 void Game::Reset()
 {
-    m_state.level = 1;
-    m_state.score = 0;
+    if (m_state.score > m_state.bestScore)
+    {
+        // Update best score
+        m_state.bestScore = m_state.score;
+    }
+
+    m_fireTimer.SetTimeout(1000);
+    m_fireTimer.Reset();
+
     m_enemies.clear();
 }

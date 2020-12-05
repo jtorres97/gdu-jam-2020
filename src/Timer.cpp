@@ -2,7 +2,7 @@
 
 Timer::Timer(int timeoutMS)
 {
-    m_timeout = std::chrono::duration<double>(timeoutMS / 1000.0);
+    SetTimeout(timeoutMS);
 
     Reset();
 }

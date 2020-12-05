@@ -9,3 +9,8 @@ float MapRange(float x, float a, float b, float c, float d)
 
     return x * ((d - c) / (b - a));
 }
+
+bool CloseEnough(float a, float b)
+{
+    return (a > (b - 0.00001) && a < (b + 0.00001));
+}

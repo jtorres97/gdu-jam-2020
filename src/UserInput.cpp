@@ -13,59 +13,29 @@ void UserInputState::PollForInput()
         {
             quit = true;
         }
-        else if (event.type == SDL_MOUSEMOTION)
-        {
-            // Continuously capture mouse position
-            int x, y;
-            SDL_GetMouseState(&x, &y);
-            cursor.x = x * (WORLDSIZE_W / RESOLUTION_W);
-            cursor.y = (RESOLUTION_H - y) * (WORLDSIZE_H / RESOLUTION_H);
-        }
-        else if (event.type == SDL_MOUSEBUTTONDOWN)
-        {
-            switch (event.button.button)
-            {
-            case SDL_BUTTON_LEFT:
-                fireMain = true;
-                break;
-            case SDL_BUTTON_RIGHT:
-                break;
-            default:
-                break;
-            }
-        }
-        else if (event.type == SDL_MOUSEBUTTONUP)
-        {
-            switch (event.button.button)
-            {
-            case SDL_BUTTON_LEFT:
-                fireMain = false;
-                break;
-            case SDL_BUTTON_RIGHT:
-                break;
-            default:
-                break;
-            }
-        }
         else if (event.type == SDL_KEYDOWN)
         {
             switch (event.key.keysym.sym)
             {
             case SDLK_w:
+            case SDLK_UP:
                 up = true;
                 break;
             case SDLK_s:
+            case SDLK_DOWN:
                 down = true;
                 break;
             case SDLK_a:
+            case SDLK_LEFT:
                 left = true;
                 break;
             case SDLK_d:
+            case SDLK_RIGHT:
                 right = true;
                 break;
             case SDLK_RETURN:
-                SDL_Log("FIRE!");
-                fireMain = true;
+            case SDLK_SPACE:
+                select = true;
                 break;
             }
         }
@@ -74,21 +44,76 @@ void UserInputState::PollForInput()
             switch (event.key.keysym.sym)
             {
             case SDLK_w:
+            case SDLK_UP:
                 up = false;
                 break;
             case SDLK_s:
+            case SDLK_DOWN:
                 down = false;
                 break;
             case SDLK_a:
+            case SDLK_LEFT:
                 left = false;
                 break;
             case SDLK_d:
+            case SDLK_RIGHT:
                 right = false;
                 break;
             case SDLK_RETURN:
-                fireMain = false;
+            case SDLK_SPACE:
+                select = false;
                 break;
             }
         }
     }
+}
+
+Vector2D WASDToMovementVector(bool U, bool D, bool L, bool R)
+{
+    float magnitude = 1.0;
+    float angle = 0.0;
+
+    if ((R && L) || U && D)
+    {
+        magnitude = 0.0;
+    }
+    // else if (R && U)
+    // {
+    //     angle = 45.0 * TO_RADS;
+    // }
+    // else if (L && U)
+    // {
+    //     angle = 135.0 * TO_RADS;
+    // }
+    // else if (L && D)
+    // {
+    //     angle = 225.0 * TO_RADS;
+    // }
+    // else if (R && D)
+    // {
+    //     angle = 315.0 * TO_RADS;
+    // }
+    else if (R)
+    {
+        angle = 0.0 * TO_RADS;
+    }
+    else if (U)
+    {
+        angle = 90.0 * TO_RADS;
+    }
+    else if (L)
+    {
+        angle = 180.0 * TO_RADS;
+    }
+    else if (D)
+    {
+        angle = -90.0 * TO_RADS;
+    }
+    else
+    {
+        magnitude = 0.0;
+        angle = 0.0;
+    }
+
+    return Vector2D(magnitude, angle);
 }

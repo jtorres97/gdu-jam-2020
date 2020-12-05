@@ -4,6 +4,8 @@
 #include "Texture.h"
 #include "Timer.h"
 
+const int ENEMY_SIZE = 8;
+
 enum class EnemyDirection
 {
     UP, 
@@ -26,6 +28,4 @@ public:
 protected:
     std::shared_ptr<Texture> m_mainTexture;
     float m_moveSpeed = 8.0f;
-
-    Timer m_fireTimer;
 };
