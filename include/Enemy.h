@@ -3,12 +3,20 @@
 #include "Entity.h"
 #include "Texture.h"
 #include "Timer.h"
-#include "Projectile.h"
+
+enum class EnemyDirection
+{
+    UP, 
+    DOWN,
+    LEFT,
+    RIGHT
+};
 
 class Enemy : public Entity
 {
 public:
-    Enemy(Point position, std::vector<std::shared_ptr<Projectile>> &projectiles);
+    EnemyDirection direction;
+    Enemy(Point position);
 
     void Update(GameState& state) override;
     void Render(SDLRenderer& renderer) override;
@@ -17,10 +25,7 @@ public:
     
 protected:
     std::shared_ptr<Texture> m_mainTexture;
-    float m_moveSpeed = 1.0f;
-    float m_projectileSpeed = 8.0f;
+    float m_moveSpeed = 8.0f;
 
     Timer m_fireTimer;
-
-    std::vector<std::shared_ptr<Projectile>>& m_projectiles;
 };

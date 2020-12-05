@@ -6,8 +6,10 @@ class Timer
 {
 public:
     Timer(int timeoutMS);
+    
     void Reset();
     bool IsExpired();
+    void SetTimeout(int timeoutMS);
 
 private:
     std::chrono::duration<double> m_timeout;

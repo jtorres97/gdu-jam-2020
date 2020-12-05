@@ -17,3 +17,8 @@ bool Timer::IsExpired()
     auto elapsedTime = std::chrono::steady_clock::now() - m_startTime;
     return elapsedTime >= m_timeout;
 }
+
+void Timer::SetTimeout(int timeoutMS)
+{
+    m_timeout = std::chrono::duration<double>(timeoutMS / 1000.0);
+}

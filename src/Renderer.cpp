@@ -143,7 +143,7 @@ void SDLRenderer::RenderTextureRotate(std::shared_ptr<Texture> texture, Rectangl
 
 void SDLRenderer::RenderFont(std::shared_ptr<Font> font, const std::string &text, Rectangle dest)
 {
-    SDL_Surface *s = TTF_RenderText_Blended(font->GetSDLFont(), text.c_str(), FG_COLOR);
+    SDL_Surface *s = TTF_RenderText_Blended(font->GetSDLFont(), text.c_str(), BG_COLOR);
     SDL_Texture *t = SDL_CreateTextureFromSurface(m_sdlRenderer, s);
 
     SDL_Rect r = ConvertRect(dest, true);

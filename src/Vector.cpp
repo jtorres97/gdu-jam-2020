@@ -108,22 +108,22 @@ Vector2D WASDToMovementVector(bool U, bool D, bool L, bool R)
     {
         magnitude = 0.0;
     }
-    else if (R && U)
-    {
-        angle = 45.0 * TO_RADS;
-    }
-    else if (L && U)
-    {
-        angle = 135.0 * TO_RADS;
-    }
-    else if (L && D)
-    {
-        angle = 225.0 * TO_RADS;
-    }
-    else if (R && D)
-    {
-        angle = 315.0 * TO_RADS;
-    }
+    // else if (R && U)
+    // {
+    //     angle = 45.0 * TO_RADS;
+    // }
+    // else if (L && U)
+    // {
+    //     angle = 135.0 * TO_RADS;
+    // }
+    // else if (L && D)
+    // {
+    //     angle = 225.0 * TO_RADS;
+    // }
+    // else if (R && D)
+    // {
+    //     angle = 315.0 * TO_RADS;
+    // }
     else if (R)
     {
         angle = 0.0 * TO_RADS;
@@ -138,7 +138,7 @@ Vector2D WASDToMovementVector(bool U, bool D, bool L, bool R)
     }
     else if (D)
     {
-        angle = 270.0 * TO_RADS;
+        angle = -90.0 * TO_RADS;
     }
     else
     {

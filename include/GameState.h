@@ -16,15 +16,13 @@ class GameState
 {
 public:
     GameStatus status = GameStatus::UNKNOWN;
+    int score = 0;
+    int level = 1;
 
     GameState();
 
     UserInputState& GetInputState();
 
-    void SetPlayerPosition(Point position);
-    Point GetPlayerPosition();
-
 private:
     UserInputState m_inputState;
-    Point m_playerPosition;
 };

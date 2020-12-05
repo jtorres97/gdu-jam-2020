@@ -1,9 +1,9 @@
 #include "Enemy.h"
 
-Enemy::Enemy(Point position, std::vector<std::shared_ptr<Projectile>> &projectiles) : Entity(), m_fireTimer(300), m_projectiles(projectiles)
+Enemy::Enemy(Point position) : Entity(), m_fireTimer(300)
 {
     m_position = position;
-    m_bound = { 48, 48 };
+    m_bound = { 8 * TEXTURE_SCALE, 8 * TEXTURE_SCALE };
 
     m_fireTimer.Reset();
 
@@ -16,20 +16,21 @@ void Enemy::Update(GameState &state)
     if (!m_isActive)
         return;
 
-    auto vectorToPlayer = Vector2D(state.GetPlayerPosition() - m_position).Normalize();
+    Point center = {WORLDSIZE_W / 2, WORLDSIZE_H / 2};
+    auto vectorToPlayer = Vector2D(center - m_position).Normalize();
 
     // Chase player
     m_velocity = vectorToPlayer.Scale(m_moveSpeed);
     m_position = m_position + m_velocity.GetPoint();
 
     // Fire at the player continuously 
-    if (m_fireTimer.IsExpired())
-    {
-        Vector2D projectileVel = vectorToPlayer.Scale(m_projectileSpeed);
-        auto projectile = std::make_shared<Projectile>(m_position, projectileVel);
-        m_projectiles.push_back(projectile);
-        m_fireTimer.Reset();
-    }
+    // if (m_fireTimer.IsExpired())
+    // {
+    //     Vector2D projectileVel = vectorToPlayer.Scale(m_projectileSpeed);
+    //     auto projectile = std::make_shared<Projectile>(m_position, projectileVel);
+    //     m_projectiles.push_back(projectile);
+    //     m_fireTimer.Reset();
+    // }
 
     if (!IsAlive())
         m_isActive = false;

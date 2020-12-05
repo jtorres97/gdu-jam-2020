@@ -1,12 +1,18 @@
 #include "Game.h"
 #include "Player.h"
-#include "Spawner.h"
+#include "Random.h"
 
 #include <algorithm>
 
-Game::Game() : m_cleanupTimer(5000)
+bool CloseEnough(float a, float b)
+{
+    return (a > (b - 0.00001) && a < (b + 0.00001));
+}
+
+Game::Game() : m_cleanupTimer(5000), FireTimer(1000)
 {
     m_cleanupTimer.Reset();
+    FireTimer.Reset();
 }
 
 void Game::Initialize()
@@ -16,6 +22,9 @@ void Game::Initialize()
     m_renderer.Initialize();
 
     m_UIFont = m_renderer.LoadFont("assets/EXEPixelPerfect.ttf");
+
+    m_overlayTexture = m_renderer.LoadTexture("assets/overlay.png");
+    m_enemyTexture = m_renderer.LoadTexture("assets/enemy.png");
 
     // Add player
     m_playerOne = std::make_shared<Player>();
@@ -72,15 +81,56 @@ void Game::Close()
 void Game::Update()
 {
     if (m_state.status != GameStatus::RUNNING)
+    {
+        if (m_state.GetInputState().fireMain)
+        {
+            Reset();
+            m_state.status = GameStatus::RUNNING;
+        }
         return;
+    }
 
     // Update game objects
 
     m_playerOne->Update(m_state);
 
-    for (auto s : m_spawners)
+    if (FireTimer.IsExpired())
     {
-        s->Update(m_state);
+        // Fire from a random direction
+        Point p = {400, -20};
+        EnemyDirection dir = EnemyDirection::UP;
+
+        int rand = RandInt(4);
+
+        if (rand == 0)
+        {
+            p = {-20, 400};
+            dir = EnemyDirection::RIGHT;
+        }
+        else if (rand == 1)
+        {
+            p = {400, 820};
+            dir = EnemyDirection::DOWN;
+        }
+        else if (rand == 2)
+        {
+            p = {820, 400};
+            dir = EnemyDirection::LEFT;
+        }
+
+        auto e = std::make_shared<Enemy>(p);
+        e->SetMainTexture(m_enemyTexture);
+        e->direction = dir;
+
+        m_enemies.push_back(e);
+
+        // Update rate as level increases
+        if (m_state.score % 10 && m_state.score < 80)
+        {
+            FireTimer.SetTimeout(startingTimeout - m_state.score * 10);
+        }
+
+        FireTimer.Reset();
     }
 
     for (auto e : m_enemies)
@@ -88,48 +138,30 @@ void Game::Update()
         e->Update(m_state);
     }
 
-    for (auto p : m_projectiles)
+    // Check for collisions
+    for (auto e : m_enemies)
     {
-        p->Update(m_state);
-
-        Point n = p->GetPosition();
-        if (n.x < 0 || n.x > WORLDSIZE_W || n.y < 0 || n.y > WORLDSIZE_H)
+        if (e->IsActive() && RectangleCollision(m_playerOne->GetHitBox(), e->GetHitBox()))
         {
-            p->Deactivate();
-        }
-    }
+            EnemyDirection d = e->direction;
+            float rot = m_playerOne->GetRotation();
 
-    // Collision checks
-
-    for (auto p : m_projectiles)
-    {
-        if (p->IsActive())
-        {
-            if (p->friendly)
+            // this is gross
+            if ((d == EnemyDirection::LEFT && CloseEnough(rot, 0.0)) ||
+                (d == EnemyDirection::UP && CloseEnough(rot, -Pi / 2)) ||
+                (d == EnemyDirection::RIGHT && CloseEnough(rot, Pi)) ||
+                (d == EnemyDirection::DOWN && CloseEnough(rot, Pi / 2)))
             {
-                HandleEnemyCollisions(p);
-                HandleSpawnerCollisions(p);
+                m_state.score++;
             }
             else
             {
-                HandlePlayerCollisions(p);
+                m_state.status = GameStatus::GAME_OVER;
             }
+
+            e->Deactivate();
         }
     }
-
-    // TODO: Check for player <---> enemy collisions
-
-    // Check if player is still alive
-    if (!m_playerOne->IsAlive())
-    {
-        m_state.status = GameStatus::GAME_OVER;
-    }
-
-    // Move any created projectiles to the main list
-    m_projectiles.insert(m_projectiles.end(),
-                       std::make_move_iterator(m_playerProjectiles.begin()),
-                       std::make_move_iterator(m_playerProjectiles.end()));
-    m_playerProjectiles.clear();
 }
 
 void Game::Render()
@@ -139,31 +171,26 @@ void Game::Render()
     // Render objects
     m_playerOne->Render(m_renderer);
 
-    for (auto s : m_spawners)
-    {
-        s->Render(m_renderer);
-    }
-
     for (auto e : m_enemies)
     {
         e->Render(m_renderer);
     }
 
-    for (auto p : m_projectiles)
-    {
-        p->Render(m_renderer);
-    }
+    m_renderer.RenderWholeTexture(m_overlayTexture, {0, 0, 800, 800});
+
+    // Render score
+    Rectangle scoreRect = {(WORLDSIZE_W - 80) - 20, (WORLDSIZE_H - 60) - 20, 80, 60};
+    m_renderer.RenderFont(m_UIFont, std::to_string(m_state.score), scoreRect);
 
     // Render the game over screen
     if (m_state.status == GameStatus::GAME_OVER)
     {
-        Rectangle textRect = {(WORLDSIZE_W - 600) / 2, (WORLDSIZE_H - 100) / 2, 600, 100};
-        m_renderer.RenderFont(m_UIFont, "GAME OVER", textRect);
-    }
+        Rectangle textRect = {100, 350, 600, 100};
+        Rectangle outline = {80, 350, 620, 100};
 
-    // Render cursor
-    Point cursorPosition = m_state.GetInputState().cursor;
-    m_renderer.RenderRectangle({cursorPosition, float(TEXTURE_SCALE), float(TEXTURE_SCALE)}, FG_COLOR.r, FG_COLOR.g, FG_COLOR.b, FG_COLOR.r);
+        m_renderer.RenderRectangle(outline, FG_COLOR.r, FG_COLOR.g, FG_COLOR.b, FG_COLOR.a);
+        m_renderer.RenderFont(m_UIFont, "TRY AGAIN?", textRect);
+    }
 
     m_renderer.Present();
 }
@@ -171,15 +198,6 @@ void Game::Render()
 void Game::Cleanup()
 {
     // Cleanup deactivated objects
-
-    for (int i = 0; i < m_spawners.size(); i++)
-    {
-        m_spawners.erase(
-            std::remove_if(m_spawners.begin(),
-                           m_spawners.end(),
-                           [](std::shared_ptr<Spawner> o) { return !o->IsActive(); }),
-            m_spawners.end());
-    }
 
     for (int i = 0; i < m_enemies.size(); i++)
     {
@@ -189,111 +207,11 @@ void Game::Cleanup()
                            [](std::shared_ptr<Enemy> o) { return !o->IsActive(); }),
             m_enemies.end());
     }
-
-    for (int i = 0; i < m_projectiles.size(); i++)
-    {
-        m_projectiles.erase(
-            std::remove_if(m_projectiles.begin(),
-                           m_projectiles.end(),
-                           [](std::shared_ptr<Projectile> o) { return !o->IsActive(); }),
-            m_projectiles.end());
-    }
 }
 
 void Game::Reset()
 {
-    m_spawners.clear();
+    m_state.level = 1;
+    m_state.score = 0;
     m_enemies.clear();
-    m_projectiles.clear();
-
-    // Add enemy spawner
-    auto spawner0 = std::make_shared<Spawner>(Point{100, 600}, m_enemies, m_projectiles);
-    spawner0->SetMainTexture(m_renderer.LoadTexture("assets/spawner.png"));
-    spawner0->SetEnemyTexture(m_renderer.LoadTexture("assets/enemy.png"));
-    m_spawners.push_back(spawner0);
-
-    auto spawner1 = std::make_shared<Spawner>(Point{800, 200}, m_enemies, m_projectiles);
-    spawner1->SetMainTexture(m_renderer.LoadTexture("assets/spawner.png"));
-    spawner1->SetEnemyTexture(m_renderer.LoadTexture("assets/enemy.png"));
-    m_spawners.push_back(spawner1);
-}
-
-void Game::HandlePlayerCollisions(std::shared_ptr<Projectile> projectile)
-{
-    if (RectangleCollision(m_playerOne->GetHitBox(), projectile->GetHitBox()))
-    {
-        projectile->Deactivate();
-
-        // Determine angle of hit
-        float projectileAngle = projectile->GetVelocity().GetAngle();
-
-        if (projectileAngle < 0.0)
-        {
-            projectileAngle += Pi;
-        }
-        else
-        {
-            projectileAngle -= Pi;
-        }
-
-        // If player angle is between -45 and 45 degrees of the projectile angle, reflect, else damage
-        float minAngle = projectileAngle - Pi / 4;
-        float maxAngle = projectileAngle + Pi / 4;
-        if (m_playerOne->GetRotation() > minAngle &&
-            m_playerOne->GetRotation() < maxAngle)
-        {
-            if (m_playerOne->GetFlip())
-            {
-                // refract projectiles
-                for (int i = 0; i < 6; i++)
-                {
-                    // TODO: fix this refraction math
-                    Vector2D refractionVector = Vector2D(10.0, projectile->GetVelocity().GetAngle() + ((i * projectile->GetVelocity().GetAngle()) / 6));
-                    auto refractedProjectile = std::make_shared<Projectile>(m_playerOne->GetHitBox().pos, refractionVector);
-                    refractedProjectile->friendly = true;
-
-                    m_playerProjectiles.push_back(refractedProjectile);
-                }
-            }
-            else
-            {
-                // reflect projectile
-                Vector2D reflectionVector = Vector2D(10, m_playerOne->GetRotation());
-                auto reflectedProjectile = std::make_shared<Projectile>(m_playerOne->GetPosition(), reflectionVector);
-                reflectedProjectile->friendly = true;
-
-                m_playerProjectiles.push_back(reflectedProjectile);
-            }
-        }
-        else
-        {
-            m_playerOne->Damage(10);
-        }
-    }
-}
-
-void Game::HandleEnemyCollisions(std::shared_ptr<Projectile> projectile)
-{
-    for (auto e : m_enemies)
-    {
-        if (RectangleCollision(projectile->GetHitBox(), e->GetHitBox()))
-        {
-            projectile->Deactivate();
-
-            e->Damage(10);
-        }
-    }
-}
-
-void Game::HandleSpawnerCollisions(std::shared_ptr<Projectile> projectile)
-{
-    for (auto s : m_spawners)
-    {
-        if (RectangleCollision(projectile->GetHitBox(), s->GetHitBox()))
-        {
-            projectile->Deactivate();
-
-            s->Damage(10);
-        }
-    }
 }
