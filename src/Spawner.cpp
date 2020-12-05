@@ -1,6 +1,6 @@
 #include "Spawner.h"
 
-Spawner::Spawner(Point position) : m_spawnTimer(1000), Entity()
+Spawner::Spawner(Point position) : m_spawnTimer(4000), Entity()
 {
     m_position = position;
     m_bound = { 128, 128 };

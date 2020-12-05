@@ -1,20 +1,45 @@
 #include "Enemy.h"
 
-Enemy::Enemy(Point position) : Entity()
+Enemy::Enemy(Point position) : Entity(), m_fireTimer(300)
 {
     m_position = position;
     m_bound = { 48, 48 };
+
+    m_fireTimer.Reset();
 }
 
 void Enemy::Update(GameState &state)
 {
+    auto vectorToPlayer = Vector2D(state.GetPlayerPosition() - m_position).Normalize();
+
     // Chase player
-    m_velocity = Vector2D(state.GetPlayerPosition() - m_position).Normalize().Scale(m_moveSpeed);
+    m_velocity = vectorToPlayer.Scale(m_moveSpeed);
     m_position = m_position + m_velocity.GetPoint();
+
+    // Fire at the player continuously 
+    if (m_fireTimer.IsExpired())
+    {
+        Vector2D projectileVel = vectorToPlayer.Scale(m_projectileSpeed);
+        auto projectile = std::make_shared<Projectile>(m_position, projectileVel);
+        m_projectiles.push_back(projectile);
+        m_fireTimer.Reset();
+    }
+
+    // Update projectiles
+    for (auto projectile : m_projectiles)
+    {
+        projectile->Update(state);
+    }
 }
 
 void Enemy::Render(SDLRenderer &renderer)
 {
+    // Render projectiles
+    for (auto projectile : m_projectiles)
+    {
+        projectile->Render(renderer);
+    }
+    
     renderer.RenderWholeTexture(m_mainTexture, GetHitBox());
 }
 
