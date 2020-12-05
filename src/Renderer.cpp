@@ -5,9 +5,9 @@
 static SDL_Rect ConvertRect(Rectangle r, bool flipAndScale = false)
 {
     SDL_Rect n = {(int)std::round(r.pos.x),
-            (int)std::round(r.pos.y),
-            (int)std::round(r.size.w),
-            (int)std::round(r.size.h)};
+                  (int)std::round(r.pos.y),
+                  (int)std::round(r.size.w),
+                  (int)std::round(r.size.h)};
 
     if (flipAndScale)
     {
@@ -35,9 +35,9 @@ void SDLRenderer::Initialize()
 
     // Create the SDL Window
     m_sdlWindow = SDL_CreateWindow("SDL DEMO",
-                              0, 0,
-                              RESOLUTION_W, RESOLUTION_H,
-                              SDL_WINDOW_SHOWN);
+                                   SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                   RESOLUTION_W, RESOLUTION_H,
+                                   SDL_WINDOW_SHOWN);
 
     if (m_sdlWindow == NULL)
     {
@@ -47,8 +47,8 @@ void SDLRenderer::Initialize()
 
     // Create an SDL renderer and attach it to the window
     m_sdlRenderer = SDL_CreateRenderer(m_sdlWindow,
-                                   -1,
-                                   SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+                                       -1,
+                                       SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     if (m_sdlRenderer == NULL)
     {

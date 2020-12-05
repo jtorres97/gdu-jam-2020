@@ -9,7 +9,8 @@
 #include "Texture.h"
 #include "Settings.h"
 
-const SDL_Color BG_COLOR = {0x22, 0x20, 0x34, 0xFF};
+const SDL_Color BG_COLOR = {0x75, 0x3D, 0x2B, 0xFF};
+const SDL_Color FG_COLOR = {0xBA, 0x5A, 0x3A, 0xFF};
 
 class SDLRenderer
 {

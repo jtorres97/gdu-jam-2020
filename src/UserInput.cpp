@@ -64,6 +64,7 @@ void UserInputState::PollForInput()
                 right = true;
                 break;
             case SDLK_RETURN:
+                SDL_Log("FIRE!");
                 fireMain = true;
                 break;
             }

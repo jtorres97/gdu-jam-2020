@@ -1,5 +1,5 @@
-#include "Animation.h
-#include "Settings.h
+#include "Animation.h"
+#include "Settings.h"
 
 Animation::Animation(std::shared_ptr<Texture> spriteSheet, int frameCount, int frameWidth, int frameHeight, int frameTime, bool pingPong)
     : m_spriteSheet(spriteSheet), m_frameCount(frameCount), m_frameWidth(frameWidth), m_frameHeight(frameHeight), m_timer(frameTime), m_pingPong(pingPong)
