@@ -6,6 +6,9 @@ Player::Player() : m_flipTimer(250), Entity()
     m_bound = { 64, 64 };
 
     m_flipTimer.Reset();
+
+    m_maxHP = 100;
+    m_HP = m_maxHP;
 }
 
 void Player::Update(GameState &state)
@@ -43,4 +46,14 @@ void Player::Render(SDLRenderer &renderer)
 void Player::SetMainTexture(std::shared_ptr<Texture> mainTexture)
 {
     m_mainTexture = mainTexture;
+}
+
+float Player::GetRotation()
+{
+    return m_rotation;
+}
+
+bool Player::GetFlip()
+{
+    return m_flip;
 }

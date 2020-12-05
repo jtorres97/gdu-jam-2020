@@ -9,10 +9,13 @@ class Player : public Entity
 public:
     Player();
 
-    void Update(GameState& state) override;
-    void Render(SDLRenderer& renderer) override;
+    void Update(GameState &state) override;
+    void Render(SDLRenderer &renderer) override;
 
     void SetMainTexture(std::shared_ptr<Texture> mainTexture);
+
+    float GetRotation();
+    bool GetFlip();
 
 protected:
     float m_moveSpeed = 1.0f;

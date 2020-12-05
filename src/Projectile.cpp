@@ -10,11 +10,17 @@ Projectile::Projectile(Point position, Vector2D velocity)
 
 void Projectile::Update(GameState &state)
 {
+    if (!m_isActive)
+        return;
+
     m_position = m_position + m_velocity.GetPoint();
 }
 
 void Projectile::Render(SDLRenderer &renderer)
 {
+    if (!m_isActive)
+        return;
+        
     // TODO: add projectile texture
     // renderer.RenderWholeTexture(m_mainTexture, GetHitBox());
     renderer.RenderRectangle(GetHitBox(), FG_COLOR.r, FG_COLOR.g, FG_COLOR.b, FG_COLOR.a);

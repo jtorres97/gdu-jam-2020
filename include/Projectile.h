@@ -6,6 +6,8 @@
 class Projectile : public Entity
 {
 public:
+    bool friendly = false;
+
     Projectile(Point position, Vector2D velocity);
     void Update(GameState &state) override;
     void Render(SDLRenderer &renderer) override;
@@ -14,5 +16,4 @@ public:
     
 protected:
     std::shared_ptr<Texture> m_mainTexture;
-    int m_damage = 10;
 };

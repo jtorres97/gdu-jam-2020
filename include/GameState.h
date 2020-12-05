@@ -5,9 +5,18 @@
 
 #include "UserInput.h"
 
+enum class GameStatus
+{
+    UNKNOWN,
+    RUNNING,
+    GAME_OVER
+};
+
 class GameState
 {
 public:
+    GameStatus status = GameStatus::UNKNOWN;
+
     GameState();
 
     UserInputState& GetInputState();

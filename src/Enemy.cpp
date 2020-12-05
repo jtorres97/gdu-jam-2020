@@ -6,10 +6,16 @@ Enemy::Enemy(Point position, std::vector<std::shared_ptr<Projectile>> &projectil
     m_bound = { 48, 48 };
 
     m_fireTimer.Reset();
+
+    m_maxHP = 30;
+    m_HP = m_maxHP;
 }
 
 void Enemy::Update(GameState &state)
 {
+    if (!m_isActive)
+        return;
+
     auto vectorToPlayer = Vector2D(state.GetPlayerPosition() - m_position).Normalize();
 
     // Chase player
@@ -24,10 +30,16 @@ void Enemy::Update(GameState &state)
         m_projectiles.push_back(projectile);
         m_fireTimer.Reset();
     }
+
+    if (!IsAlive())
+        m_isActive = false;
 }
 
 void Enemy::Render(SDLRenderer &renderer)
 {
+    if (!m_isActive)
+        return;
+
     renderer.RenderWholeTexture(m_mainTexture, GetHitBox());
 }
 

@@ -23,7 +23,7 @@ protected:
     std::shared_ptr<Texture> m_mainTexture;
     std::shared_ptr<Texture> m_enemyTexture;
     std::vector<std::shared_ptr<Enemy>> &m_enemies;
-    std::vector<std::shared_ptr<Projectile>> &Projectiles;
+    std::vector<std::shared_ptr<Projectile>> &m_projectiles;
 
     Timer m_spawnTimer;
 };

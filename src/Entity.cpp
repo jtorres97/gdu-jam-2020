@@ -26,3 +26,38 @@ bool Entity::IsActive()
 {
     return m_isActive;
 }
+
+void Entity::Deactivate()
+{
+    m_isActive = false;
+}
+
+Point Entity::GetPosition()
+{
+    return m_position;
+}
+
+Vector2D Entity::GetVelocity()
+{
+    return m_velocity;
+}
+
+void Entity::SetVelocity(Vector2D velocity)
+{
+    m_velocity = velocity;
+}
+
+void Entity::Damage(int damage)
+{
+    m_HP -= damage;
+
+    if (m_HP < 0)
+    {
+        m_HP = 0;
+    }
+}
+
+bool Entity::IsAlive()
+{
+    return m_HP > 0;
+}
