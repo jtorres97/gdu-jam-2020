@@ -47,6 +47,12 @@ void SDLRenderer::Initialize()
         exit(1);
     }
 
+    if (Mix_Init(MIX_INIT_MOD | MIX_INIT_MP3) == 0)
+    {
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to initialize Mixer: %s", Mix_GetError());
+        exit(1);
+    }
+
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
     // Create the SDL Window
