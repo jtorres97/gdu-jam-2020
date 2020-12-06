@@ -384,16 +384,28 @@ void Game::Render()
 
         // Render high scores
         Rectangle easyRect = {68 * TEXTURE_SCALE * 4, 57 * TEXTURE_SCALE * 4, 15 * TEXTURE_SCALE * 4, 12 * TEXTURE_SCALE * 4};
+        Rectangle easyNumRect = easyRect;
+        easyNumRect.pos.x += 24;
+        easyNumRect.size.w -= 40;
+        easyNumRect.size.h += 16;
         m_renderer.RenderWholeTexture(m_scoreFrameTexture, easyRect);
-        m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreEasy), easyRect, FG_COLOR);
+        m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreEasy), easyNumRect, FG_COLOR);
 
         Rectangle normalRect = {68 * TEXTURE_SCALE * 4, 42 * TEXTURE_SCALE * 4, 15 * TEXTURE_SCALE * 4, 12 * TEXTURE_SCALE * 4};
+        Rectangle normalNumRect = normalRect;
+        normalNumRect.pos.x += 24;
+        normalNumRect.size.w -= 40;
+        normalNumRect.size.h += 16;
         m_renderer.RenderWholeTexture(m_scoreFrameTexture, normalRect);
-        m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreNormal), normalRect, FG_COLOR);
+        m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreNormal), normalNumRect, FG_COLOR);
 
         Rectangle insaneRect = {68 * TEXTURE_SCALE * 4, 27 * TEXTURE_SCALE * 4, 15 * TEXTURE_SCALE * 4, 12 * TEXTURE_SCALE * 4};
+        Rectangle insaneNumRect = insaneRect;
+        insaneNumRect.pos.x += 24;
+        insaneNumRect.size.w -= 40;
+        insaneNumRect.size.h += 16;
         m_renderer.RenderWholeTexture(m_scoreFrameTexture, insaneRect);
-        m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreInsane), insaneRect, FG_COLOR);
+        m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreInsane), insaneNumRect, FG_COLOR);
     }
     else if (m_state.status == GameStatus::GAME_OVER)
     {
