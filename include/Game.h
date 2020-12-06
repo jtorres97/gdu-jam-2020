@@ -46,6 +46,7 @@ private:
 
     std::shared_ptr<Texture> m_overlayTexture;
     std::shared_ptr<Texture> m_enemyTexture;
+    std::shared_ptr<Texture> m_scoreFrameTexture;
 
     std::shared_ptr<Player> m_playerOne;
     std::vector<std::shared_ptr<Enemy>> m_enemies;
@@ -58,17 +59,17 @@ private:
     EnemyDirection m_lastDirection = EnemyDirection::UNKNOWN;
 
     // UI stuff
-    Animation ButtonCasualAnimation;
-    Animation ButtonNormalAnimation;
-    Animation ButtonInsaneAnimation;
-    Animation ButtonExitAnimation;
-    Animation ButtonExitLargeAnimation;
-    Animation ButtonRetryAnimation;
+    Animation m_buttonCasualAnimation;
+    Animation m_buttonNormalAnimation;
+    Animation m_buttonInsaneAnimation;
+    Animation m_buttonExitAnimation;
+    Animation m_buttonExitLargeAnimation;
+    Animation m_buttonRetryAnimation;
 
-    int MainMenuSelectedButtonIndex = 0;
-    int GameoverMenuSelectedButtonIndex = 0;
-    int PauseMenuSelectedButtonIndex = 0;
+    int m_mainMenuSelectedButtonIndex = 0;
+    int m_gameoverMenuSelectedButtonIndex = 0;
+    int m_pauseMenuSelectedButtonIndex = 0;
 
-    bool MenuButtonDownLast = false;
-    bool ModeSwitch = false;
+    bool m_menuButtonDownLast = false;
+    bool m_modeSwitch = false;
 };

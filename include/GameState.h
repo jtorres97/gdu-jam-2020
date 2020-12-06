@@ -16,7 +16,11 @@ enum class GameStatus
 struct GameState
 {
     GameStatus status = GameStatus::UNKNOWN;
+    UserInputState input;
+
     int score = 0;
     int bestScore = 0;
-    UserInputState input;
+    int bestScoreEasy = 0;
+    int bestScoreNormal = 0;
+    int bestScoreInsane = 0;
 };

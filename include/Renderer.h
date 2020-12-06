@@ -26,7 +26,7 @@ public:
     void RenderWholeTextureRotate(std::shared_ptr<Texture> texture, Rectangle dest, float angle, Point center);
     void RenderTexture(std::shared_ptr<Texture> texture, Rectangle source, Rectangle dest);
     void RenderTextureRotate(std::shared_ptr<Texture> texture, Rectangle source, Rectangle dest, float angle, Point center);
-    void RenderFont(std::shared_ptr<Font> font, const std::string& text, Rectangle dest);
+    void RenderFont(std::shared_ptr<Font> font, const std::string& text, Rectangle dest, SDL_Color color);
 
     std::shared_ptr<Texture> LoadTexture(const std::string& fileName);
     std::shared_ptr<Font> LoadFont(const std::string& fileName);

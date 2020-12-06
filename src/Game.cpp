@@ -22,15 +22,16 @@ void Game::Initialize()
     m_UIFont = m_renderer.LoadFont("assets/EXEPixelPerfect.ttf");
     m_overlayTexture = m_renderer.LoadTexture("assets/overlay.png");
     m_enemyTexture = m_renderer.LoadTexture("assets/enemy.png");
+    m_scoreFrameTexture = m_renderer.LoadTexture("assets/score_frame.png");
     auto playerTexture = m_renderer.LoadTexture("assets/player.png");
 
     // load animations
-    ButtonCasualAnimation = Animation(m_renderer.LoadTexture("assets/button_easy.png"), 2, 47, 12, 0, false);
-    ButtonNormalAnimation = Animation(m_renderer.LoadTexture("assets/button_normal.png"), 2, 47, 12, 0, false);
-    ButtonInsaneAnimation = Animation(m_renderer.LoadTexture("assets/button_insane.png"), 2, 47, 12, 0, false);
-    ButtonExitAnimation = Animation(m_renderer.LoadTexture("assets/button_exit.png"), 2, 33, 12, 0, false);
-    ButtonExitLargeAnimation = Animation(m_renderer.LoadTexture("assets/button_exit_large.png"), 2, 47, 12, 0, false);
-    ButtonRetryAnimation = Animation(m_renderer.LoadTexture("assets/button_retry.png"), 2, 47, 12, 0, false);
+    m_buttonCasualAnimation = Animation(m_renderer.LoadTexture("assets/button_easy.png"), 2, 47, 12, 0, false);
+    m_buttonNormalAnimation = Animation(m_renderer.LoadTexture("assets/button_normal.png"), 2, 47, 12, 0, false);
+    m_buttonInsaneAnimation = Animation(m_renderer.LoadTexture("assets/button_insane.png"), 2, 47, 12, 0, false);
+    m_buttonExitAnimation = Animation(m_renderer.LoadTexture("assets/button_exit.png"), 2, 33, 12, 0, false);
+    m_buttonExitLargeAnimation = Animation(m_renderer.LoadTexture("assets/button_exit_large.png"), 2, 47, 12, 0, false);
+    m_buttonRetryAnimation = Animation(m_renderer.LoadTexture("assets/button_retry.png"), 2, 47, 12, 0, false);
 
     // Add player
     m_playerOne = std::make_shared<Player>();
@@ -88,81 +89,81 @@ void Game::Update()
 {
     if (m_state.status == GameStatus::MENU)
     {
-        if (ModeSwitch && m_state.input.select)
+        if (m_modeSwitch && m_state.input.select)
             return;
 
-        ModeSwitch = false;
+        m_modeSwitch = false;
 
         // Change the selected button index
         if (m_state.input.down)
         {
-            if (!MenuButtonDownLast)
+            if (!m_menuButtonDownLast)
             {
-                MainMenuSelectedButtonIndex = MainMenuSelectedButtonIndex == 3 ? 0 : MainMenuSelectedButtonIndex + 1;
-                MenuButtonDownLast = true;
+                m_mainMenuSelectedButtonIndex = m_mainMenuSelectedButtonIndex == 3 ? 0 : m_mainMenuSelectedButtonIndex + 1;
+                m_menuButtonDownLast = true;
             }
         }
         else if (m_state.input.up)
         {
-            if (!MenuButtonDownLast)
+            if (!m_menuButtonDownLast)
             {
-                MainMenuSelectedButtonIndex = MainMenuSelectedButtonIndex == 0 ? 3 : MainMenuSelectedButtonIndex - 1;
-                MenuButtonDownLast = true;
+                m_mainMenuSelectedButtonIndex = m_mainMenuSelectedButtonIndex == 0 ? 3 : m_mainMenuSelectedButtonIndex - 1;
+                m_menuButtonDownLast = true;
             }
         }
         else
         {
-            MenuButtonDownLast = false;
+            m_menuButtonDownLast = false;
         }
 
         // Reset all buttons
-        ButtonCasualAnimation.SetFrame(0);
-        ButtonNormalAnimation.SetFrame(0);
-        ButtonInsaneAnimation.SetFrame(0);
-        ButtonExitAnimation.SetFrame(0);
+        m_buttonCasualAnimation.SetFrame(0);
+        m_buttonNormalAnimation.SetFrame(0);
+        m_buttonInsaneAnimation.SetFrame(0);
+        m_buttonExitAnimation.SetFrame(0);
 
-        if (MainMenuSelectedButtonIndex == 0)
+        if (m_mainMenuSelectedButtonIndex == 0)
         {
-            ButtonCasualAnimation.SetFrame(1);
+            m_buttonCasualAnimation.SetFrame(1);
         }
-        else if (MainMenuSelectedButtonIndex == 1)
+        else if (m_mainMenuSelectedButtonIndex == 1)
         {
-            ButtonNormalAnimation.SetFrame(1);
+            m_buttonNormalAnimation.SetFrame(1);
         }
-        else if (MainMenuSelectedButtonIndex == 2)
+        else if (m_mainMenuSelectedButtonIndex == 2)
         {
-            ButtonInsaneAnimation.SetFrame(1);
+            m_buttonInsaneAnimation.SetFrame(1);
         }
-        else if (MainMenuSelectedButtonIndex == 3)
+        else if (m_mainMenuSelectedButtonIndex == 3)
         {
-            ButtonExitAnimation.SetFrame(1);
+            m_buttonExitAnimation.SetFrame(1);
         }
 
         if (m_state.input.select)
         {
             // Button selected, handle it
-            if (MainMenuSelectedButtonIndex == 0)
+            if (m_mainMenuSelectedButtonIndex == 0)
             {
                 // Play easy
                 m_selectedDifficulty = GameDifficulty::EASY;
                 Reset();
                 m_state.status = GameStatus::RUNNING;
             }
-            else if (MainMenuSelectedButtonIndex == 1)
+            else if (m_mainMenuSelectedButtonIndex == 1)
             {
                 // Play normal
                 m_selectedDifficulty = GameDifficulty::NORMAL;
                 Reset();
                 m_state.status = GameStatus::RUNNING;
             }
-            else if (MainMenuSelectedButtonIndex == 2)
+            else if (m_mainMenuSelectedButtonIndex == 2)
             {
                 // Play insane
                 m_selectedDifficulty = GameDifficulty::INSANE;
                 Reset();
                 m_state.status = GameStatus::RUNNING;
             }
-            else if (MainMenuSelectedButtonIndex == 3)
+            else if (m_mainMenuSelectedButtonIndex == 3)
             {
                 // Exit
                 m_isRunning = false;
@@ -174,53 +175,53 @@ void Game::Update()
         // Change the selected button index
         if (m_state.input.down)
         {
-            if (!MenuButtonDownLast)
+            if (!m_menuButtonDownLast)
             {
-                GameoverMenuSelectedButtonIndex = GameoverMenuSelectedButtonIndex == 1 ? 0 : GameoverMenuSelectedButtonIndex + 1;
-                MenuButtonDownLast = true;
+                m_gameoverMenuSelectedButtonIndex = m_gameoverMenuSelectedButtonIndex == 1 ? 0 : m_gameoverMenuSelectedButtonIndex + 1;
+                m_menuButtonDownLast = true;
             }
         }
         else if (m_state.input.up)
         {
-            if (!MenuButtonDownLast)
+            if (!m_menuButtonDownLast)
             {
-                GameoverMenuSelectedButtonIndex = GameoverMenuSelectedButtonIndex == 0 ? 1 : GameoverMenuSelectedButtonIndex - 1;
-                MenuButtonDownLast = true;
+                m_gameoverMenuSelectedButtonIndex = m_gameoverMenuSelectedButtonIndex == 0 ? 1 : m_gameoverMenuSelectedButtonIndex - 1;
+                m_menuButtonDownLast = true;
             }
         }
         else
         {
-            MenuButtonDownLast = false;
+            m_menuButtonDownLast = false;
         }
 
         // Reset all buttons
-        ButtonRetryAnimation.SetFrame(0);
-        ButtonExitLargeAnimation.SetFrame(0);
+        m_buttonRetryAnimation.SetFrame(0);
+        m_buttonExitLargeAnimation.SetFrame(0);
 
-        if (GameoverMenuSelectedButtonIndex == 0)
+        if (m_gameoverMenuSelectedButtonIndex == 0)
         {
-            ButtonRetryAnimation.SetFrame(1);
+            m_buttonRetryAnimation.SetFrame(1);
         }
-        else if (GameoverMenuSelectedButtonIndex == 1)
+        else if (m_gameoverMenuSelectedButtonIndex == 1)
         {
-            ButtonExitLargeAnimation.SetFrame(1);
+            m_buttonExitLargeAnimation.SetFrame(1);
         }
 
         if (m_state.input.select)
         {
             // Button selected, handle it
-            if (GameoverMenuSelectedButtonIndex == 0)
+            if (m_gameoverMenuSelectedButtonIndex == 0)
             {
                 // Handle retry
-                Reset();
                 m_state.status = GameStatus::RUNNING;
             }
-            else if (GameoverMenuSelectedButtonIndex == 1)
+            else if (m_gameoverMenuSelectedButtonIndex == 1)
             {
                 // Handle exit
                 m_state.status = GameStatus::MENU;
-                ModeSwitch = true;
+                m_modeSwitch = true;
             }
+            Reset();
         }
     }
     else if (m_state.status == GameStatus::RUNNING)
@@ -327,10 +328,23 @@ void Game::Render()
         // TODO: Render title
 
         // Render buttons
-        ButtonCasualAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 57 * TEXTURE_SCALE);
-        ButtonNormalAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 42 * TEXTURE_SCALE);
-        ButtonInsaneAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 27 * TEXTURE_SCALE);
-        ButtonExitAnimation.Render(m_renderer, 35 * TEXTURE_SCALE, 10 * TEXTURE_SCALE);
+        m_buttonCasualAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 57 * TEXTURE_SCALE);
+        m_buttonNormalAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 42 * TEXTURE_SCALE);
+        m_buttonInsaneAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 27 * TEXTURE_SCALE);
+        m_buttonExitAnimation.Render(m_renderer, 35 * TEXTURE_SCALE, 10 * TEXTURE_SCALE);
+
+        // Render high scores
+        Rectangle easyRect = {68 * TEXTURE_SCALE, 57 * TEXTURE_SCALE, 15 * TEXTURE_SCALE, 12 * TEXTURE_SCALE};
+        m_renderer.RenderWholeTexture(m_scoreFrameTexture, easyRect);
+        m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreEasy), easyRect, FG_COLOR);
+
+        Rectangle normalRect = {68 * TEXTURE_SCALE, 42 * TEXTURE_SCALE, 15 * TEXTURE_SCALE, 12 * TEXTURE_SCALE};
+        m_renderer.RenderWholeTexture(m_scoreFrameTexture, normalRect);
+        m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreNormal), normalRect, FG_COLOR);
+
+        Rectangle insaneRect = {68 * TEXTURE_SCALE, 27 * TEXTURE_SCALE, 15 * TEXTURE_SCALE, 12 * TEXTURE_SCALE};
+        m_renderer.RenderWholeTexture(m_scoreFrameTexture, insaneRect);
+        m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreInsane), insaneRect, FG_COLOR);
     }
     else if (m_state.status == GameStatus::GAME_OVER)
     {
@@ -341,15 +355,15 @@ void Game::Render()
         float h = 60;
         float offset = 20;
         Rectangle scoreRect = {offset, WORLDSIZE_H - h - offset, w, h};
-        m_renderer.RenderFont(m_UIFont, "SCORE: " + std::to_string(m_state.score), scoreRect);
+        m_renderer.RenderFont(m_UIFont, "SCORE: " + std::to_string(m_state.score), scoreRect, BG_COLOR);
 
         Rectangle bestScoreRect = {WORLDSIZE_W - w - offset, WORLDSIZE_H - h - offset, w, h};
-        m_renderer.RenderFont(m_UIFont, "BEST: " + std::to_string(m_state.bestScore), bestScoreRect);
+        m_renderer.RenderFont(m_UIFont, "BEST: " + std::to_string(m_state.bestScore), bestScoreRect, BG_COLOR);
 
         // Render buttons
 
-        ButtonRetryAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 50 * TEXTURE_SCALE);
-        ButtonExitLargeAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 25 * TEXTURE_SCALE);
+        m_buttonRetryAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 50 * TEXTURE_SCALE);
+        m_buttonExitLargeAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 25 * TEXTURE_SCALE);
     }
     else if (m_state.status == GameStatus::RUNNING)
     {
@@ -367,10 +381,10 @@ void Game::Render()
         float h = 60;
         float offset = 20;
         Rectangle scoreRect = {offset, WORLDSIZE_H - h - offset, w, h};
-        m_renderer.RenderFont(m_UIFont, "SCORE: " + std::to_string(m_state.score), scoreRect);
+        m_renderer.RenderFont(m_UIFont, "SCORE: " + std::to_string(m_state.score), scoreRect, BG_COLOR);
 
         Rectangle bestScoreRect = {WORLDSIZE_W - w - offset, WORLDSIZE_H - h - offset, w, h};
-        m_renderer.RenderFont(m_UIFont, "BEST: " + std::to_string(m_state.bestScore), bestScoreRect);
+        m_renderer.RenderFont(m_UIFont, "BEST: " + std::to_string(m_state.bestScore), bestScoreRect, BG_COLOR);
     }
 
     m_renderer.Present();
@@ -393,6 +407,10 @@ void Game::Reset()
 {
     m_state.score = 0;
     m_state.bestScore = m_DB.GetHighScore(static_cast<int>(m_selectedDifficulty));
+
+    m_state.bestScoreEasy = m_DB.GetHighScore(static_cast<int>(GameDifficulty::EASY));
+    m_state.bestScoreNormal = m_DB.GetHighScore(static_cast<int>(GameDifficulty::NORMAL));
+    m_state.bestScoreInsane = m_DB.GetHighScore(static_cast<int>(GameDifficulty::INSANE));
 
     m_fireTimer.SetTimeout(1000);
     m_fireTimer.Reset();
