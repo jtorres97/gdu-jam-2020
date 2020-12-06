@@ -28,7 +28,7 @@ void Game::Initialize()
     m_overlayTexture = m_renderer.LoadTexture("assets/overlay.png");
     m_enemyTexture = m_renderer.LoadTexture("assets/virus.png");
     m_scoreFrameTexture = m_renderer.LoadTexture("assets/score_frame.png");
-    auto playerTexture = m_renderer.LoadTexture("assets/player.png");
+    m_titleLogo = m_renderer.LoadTexture("assets/logo.png");
 
     // load animations
     m_buttonCasualAnimation = Animation(m_renderer.LoadTexture("assets/button_easy.png"), 2, 47 * 4, 12 * 4, 0, false);
@@ -37,6 +37,7 @@ void Game::Initialize()
     m_buttonExitAnimation = Animation(m_renderer.LoadTexture("assets/button_exit.png"), 2, 33 * 4, 12 * 4, 0, false);
     m_buttonExitLargeAnimation = Animation(m_renderer.LoadTexture("assets/button_exit_large.png"), 2, 47 * 4, 12 * 4, 0, false);
     m_buttonRetryAnimation = Animation(m_renderer.LoadTexture("assets/button_retry.png"), 2, 47 * 4, 12 * 4, 0, false);
+    m_mainMenuAnimation = Animation(m_renderer.LoadTexture("assets/player_down.png"), 3, 28, 28, 150, true);
 
     // Load sounds
     m_positiveSound = m_renderer.LoadSFX("assets/positive.wav");
@@ -45,9 +46,9 @@ void Game::Initialize()
     m_selectSound = m_renderer.LoadSFX("assets/select.wav");
 
     // load music
-    SlowMusic = m_renderer.LoadMusic("assets/easy_theme.mp3");
-    MediumMusic = m_renderer.LoadMusic("assets/normal_theme.mp3");
-    FastMusic = m_renderer.LoadMusic("assets/insane_theme.mp3");
+    m_slowMusic = m_renderer.LoadMusic("assets/easy_theme.mp3");
+    m_ediumMusic = m_renderer.LoadMusic("assets/normal_theme.mp3");
+    m_fastMusic = m_renderer.LoadMusic("assets/insane_theme.mp3");
 
     // Add player
     m_playerOne = std::make_shared<Player>();
@@ -58,7 +59,7 @@ void Game::Initialize()
 
     Reset();
 
-    m_renderer.PlayMusic(SlowMusic);
+    m_renderer.PlayMusic(m_slowMusic);
 }
 
 void Game::Run()
@@ -110,6 +111,8 @@ void Game::Update()
 {
     if (m_state.status == GameStatus::MENU)
     {
+        m_mainMenuAnimation.Update();
+
         if (m_modeSwitch && m_state.input.select)
             return;
 
@@ -176,7 +179,7 @@ void Game::Update()
                 Reset();
                 m_state.status = GameStatus::RUNNING;
 
-                m_renderer.PlayMusic(SlowMusic);
+                m_renderer.PlayMusic(m_slowMusic);
             }
             else if (m_mainMenuSelectedButtonIndex == 1)
             {
@@ -185,7 +188,7 @@ void Game::Update()
                 Reset();
                 m_state.status = GameStatus::RUNNING;
 
-                m_renderer.PlayMusic(MediumMusic);
+                m_renderer.PlayMusic(m_ediumMusic);
             }
             else if (m_mainMenuSelectedButtonIndex == 2)
             {
@@ -194,7 +197,7 @@ void Game::Update()
                 Reset();
                 m_state.status = GameStatus::RUNNING;
 
-                m_renderer.PlayMusic(FastMusic);
+                m_renderer.PlayMusic(m_fastMusic);
             }
             else if (m_mainMenuSelectedButtonIndex == 3)
             {
@@ -341,7 +344,7 @@ void Game::Update()
                 }
                 else
                 {
-                    m_renderer.PlayMusic(SlowMusic);
+                    m_renderer.PlayMusic(m_slowMusic);
                     m_renderer.PlaySFX(m_negativeSound);
 
                     m_state.status = GameStatus::GAME_OVER;
@@ -367,7 +370,11 @@ void Game::Render()
 
     if (m_state.status == GameStatus::MENU)
     {
-        // TODO: Render title
+        // Render title
+        Rectangle logoRect = {18 * TEXTURE_SCALE * 4, 57 * TEXTURE_SCALE * 4 + 120, 180 * 3 - 20, 100 * 2};
+        m_renderer.RenderWholeTexture(m_titleLogo, logoRect);
+
+        m_mainMenuAnimation.Render(m_renderer, 590, 585);
 
         // Render buttons
         m_buttonCasualAnimation.Render(m_renderer, 18 * TEXTURE_SCALE * 4, 57 * TEXTURE_SCALE * 4);

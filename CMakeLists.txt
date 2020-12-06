@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14.4)
-project(project_template_name)
+project(virusdoom)
 
 set(CMAKE_CXX_STANDARD 17)
 

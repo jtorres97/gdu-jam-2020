@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-const std::string WINDOW_TITLE = "Virusphobia";
+const std::string WINDOW_TITLE = "Virusdoom";
 
 static SDL_Rect ConvertRect(Rectangle r, bool flipAndScale = false)
 {

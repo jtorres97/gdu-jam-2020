@@ -47,6 +47,7 @@ private:
     std::shared_ptr<Texture> m_overlayTexture;
     std::shared_ptr<Texture> m_enemyTexture;
     std::shared_ptr<Texture> m_scoreFrameTexture;
+    std::shared_ptr<Texture> m_titleLogo;
 
     std::shared_ptr<Player> m_playerOne;
     std::vector<std::shared_ptr<Enemy>> m_enemies;
@@ -65,6 +66,7 @@ private:
     Animation m_buttonExitAnimation;
     Animation m_buttonExitLargeAnimation;
     Animation m_buttonRetryAnimation;
+    Animation m_mainMenuAnimation;
 
     int m_mainMenuSelectedButtonIndex = 0;
     int m_gameoverMenuSelectedButtonIndex = 0;
@@ -79,7 +81,7 @@ private:
     std::shared_ptr<Sound> m_clickSound;
     std::shared_ptr<Sound> m_selectSound;
 
-    std::shared_ptr<Music> SlowMusic;
-    std::shared_ptr<Music> MediumMusic;
-    std::shared_ptr<Music> FastMusic;
+    std::shared_ptr<Music> m_slowMusic;
+    std::shared_ptr<Music> m_ediumMusic;
+    std::shared_ptr<Music> m_fastMusic;
 };
