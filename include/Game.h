@@ -74,8 +74,12 @@ private:
     bool m_modeSwitch = false;
 
     // Sounds
-    std::shared_ptr<Sound> SuccessSound;
-    std::shared_ptr<Sound> FailSound;
-    std::shared_ptr<Sound> ClickSound;
-    std::shared_ptr<Sound> SelectSound;
+    std::shared_ptr<Sound> m_positiveSound;
+    std::shared_ptr<Sound> m_negativeSound;
+    std::shared_ptr<Sound> m_clickSound;
+    std::shared_ptr<Sound> m_selectSound;
+
+    std::shared_ptr<Music> SlowMusic;
+    std::shared_ptr<Music> MediumMusic;
+    std::shared_ptr<Music> FastMusic;
 };

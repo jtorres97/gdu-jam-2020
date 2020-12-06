@@ -39,10 +39,15 @@ void Game::Initialize()
     m_buttonRetryAnimation = Animation(m_renderer.LoadTexture("assets/button_retry.png"), 2, 47 * 4, 12 * 4, 0, false);
 
     // Load sounds
-    SuccessSound = m_renderer.LoadSound("assets/positive.wav");
-    FailSound = m_renderer.LoadSound("assets/negative.wav");
-    ClickSound = m_renderer.LoadSound("assets/move.wav");
-    SelectSound = m_renderer.LoadSound("assets/select.wav");
+    m_positiveSound = m_renderer.LoadSFX("assets/positive.wav");
+    m_negativeSound = m_renderer.LoadSFX("assets/negative.wav");
+    m_clickSound = m_renderer.LoadSFX("assets/move.wav");
+    m_selectSound = m_renderer.LoadSFX("assets/select.wav");
+
+    // load music
+    SlowMusic = m_renderer.LoadMusic("assets/easy_theme.mp3");
+    MediumMusic = m_renderer.LoadMusic("assets/normal_theme.mp3");
+    FastMusic = m_renderer.LoadMusic("assets/insane_theme.mp3");
 
     // Add player
     m_playerOne = std::make_shared<Player>();
@@ -52,6 +57,8 @@ void Game::Initialize()
     m_playerOne->SetDownAnimation(std::make_shared<Animation>(m_renderer.LoadTexture("assets/player_down.png"), 3, 28, 28, 150, true));
 
     Reset();
+
+    m_renderer.PlayMusic(SlowMusic);
 }
 
 void Game::Run()
@@ -113,7 +120,7 @@ void Game::Update()
         {
             if (!m_menuButtonDownLast)
             {
-                m_renderer.PlaySound(ClickSound);
+                m_renderer.PlaySFX(m_clickSound);
 
                 m_mainMenuSelectedButtonIndex = m_mainMenuSelectedButtonIndex == 3 ? 0 : m_mainMenuSelectedButtonIndex + 1;
                 m_menuButtonDownLast = true;
@@ -123,7 +130,7 @@ void Game::Update()
         {
             if (!m_menuButtonDownLast)
             {
-                m_renderer.PlaySound(ClickSound);
+                m_renderer.PlaySFX(m_clickSound);
 
                 m_mainMenuSelectedButtonIndex = m_mainMenuSelectedButtonIndex == 0 ? 3 : m_mainMenuSelectedButtonIndex - 1;
                 m_menuButtonDownLast = true;
@@ -159,7 +166,7 @@ void Game::Update()
 
         if (m_state.input.select)
         {
-            m_renderer.PlaySound(SelectSound);
+            m_renderer.PlaySFX(m_selectSound);
 
             // Button selected, handle it
             if (m_mainMenuSelectedButtonIndex == 0)
@@ -168,6 +175,8 @@ void Game::Update()
                 m_selectedDifficulty = GameDifficulty::EASY;
                 Reset();
                 m_state.status = GameStatus::RUNNING;
+
+                m_renderer.PlayMusic(SlowMusic);
             }
             else if (m_mainMenuSelectedButtonIndex == 1)
             {
@@ -175,6 +184,8 @@ void Game::Update()
                 m_selectedDifficulty = GameDifficulty::NORMAL;
                 Reset();
                 m_state.status = GameStatus::RUNNING;
+
+                m_renderer.PlayMusic(MediumMusic);
             }
             else if (m_mainMenuSelectedButtonIndex == 2)
             {
@@ -182,6 +193,8 @@ void Game::Update()
                 m_selectedDifficulty = GameDifficulty::INSANE;
                 Reset();
                 m_state.status = GameStatus::RUNNING;
+
+                m_renderer.PlayMusic(FastMusic);
             }
             else if (m_mainMenuSelectedButtonIndex == 3)
             {
@@ -197,7 +210,7 @@ void Game::Update()
         {
             if (!m_menuButtonDownLast)
             {
-                m_renderer.PlaySound(ClickSound);
+                m_renderer.PlaySFX(m_clickSound);
 
                 m_gameoverMenuSelectedButtonIndex = m_gameoverMenuSelectedButtonIndex == 1 ? 0 : m_gameoverMenuSelectedButtonIndex + 1;
                 m_menuButtonDownLast = true;
@@ -207,7 +220,7 @@ void Game::Update()
         {
             if (!m_menuButtonDownLast)
             {
-                m_renderer.PlaySound(ClickSound);
+                m_renderer.PlaySFX(m_clickSound);
 
                 m_gameoverMenuSelectedButtonIndex = m_gameoverMenuSelectedButtonIndex == 0 ? 1 : m_gameoverMenuSelectedButtonIndex - 1;
                 m_menuButtonDownLast = true;
@@ -234,7 +247,7 @@ void Game::Update()
         if (m_state.input.select)
         {
             // Button selected, handle it
-            m_renderer.PlaySound(SelectSound);
+            m_renderer.PlaySFX(m_selectSound);
             if (m_gameoverMenuSelectedButtonIndex == 0)
             {
                 // Handle retry
@@ -322,14 +335,15 @@ void Game::Update()
                     (d == EnemyDirection::RIGHT && CloseEnough(rot, Pi)) ||
                     (d == EnemyDirection::DOWN && CloseEnough(rot, Pi / 2)))
                 {
-                    m_renderer.PlaySound(SuccessSound);
+                    m_renderer.PlaySFX(m_positiveSound);
 
                     m_state.score++;
                 }
                 else
                 {
-                    m_renderer.PlaySound(FailSound);
-                    
+                    m_renderer.PlayMusic(SlowMusic);
+                    m_renderer.PlaySFX(m_negativeSound);
+
                     m_state.status = GameStatus::GAME_OVER;
 
                     if (m_state.score > m_state.bestScore)

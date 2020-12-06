@@ -185,13 +185,24 @@ std::shared_ptr<Font> SDLRenderer::LoadFont(const std::string &fileName)
     return std::make_shared<Font>(font);
 }
 
-std::shared_ptr<Sound> SDLRenderer::LoadSound(const std::string &fileName)
+std::shared_ptr<Sound> SDLRenderer::LoadSFX(const std::string &fileName)
 {
     Mix_Chunk *m = Mix_LoadWAV(fileName.c_str());
     return std::make_shared<Sound>(m);
 }
 
-void SDLRenderer::PlaySound(std::shared_ptr<Sound> sound)
+std::shared_ptr<Music> SDLRenderer::LoadMusic(const std::string& fileName)
+{
+    Mix_Music* m = Mix_LoadMUS(fileName.c_str());
+    return std::make_shared<Music>(m);
+}
+
+void SDLRenderer::PlaySFX(std::shared_ptr<Sound> sound)
 {
     Mix_PlayChannel(-1, sound->GetChunk(), 0);
+}
+
+void SDLRenderer::PlayMusic(std::shared_ptr<Music> music)
+{
+    Mix_PlayMusic(music->GetMusic(), -1);
 }

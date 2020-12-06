@@ -32,9 +32,11 @@ public:
 
     std::shared_ptr<Texture> LoadTexture(const std::string& fileName);
     std::shared_ptr<Font> LoadFont(const std::string& fileName);
-    std::shared_ptr<Sound> LoadSound(const std::string& fileName);
+    std::shared_ptr<Sound> LoadSFX(const std::string& fileName);
+    std::shared_ptr<Music> LoadMusic(const std::string& fileName);
 
-    void PlaySound(std::shared_ptr<Sound> sound);
+    void PlaySFX(std::shared_ptr<Sound> sound);
+    void PlayMusic(std::shared_ptr<Music> music);
 
 private:
     SDL_Window *m_sdlWindow;
