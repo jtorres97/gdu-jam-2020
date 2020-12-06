@@ -4,11 +4,13 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "Geometry.h"
 #include "Texture.h"
 #include "Settings.h"
 #include "Font.h"
+#include "Sound.h"
 
 const SDL_Color BG_COLOR = {0x75, 0x3D, 0x2B, 0xFF};
 const SDL_Color FG_COLOR = {0xBA, 0x5A, 0x3A, 0xFF};
@@ -30,6 +32,9 @@ public:
 
     std::shared_ptr<Texture> LoadTexture(const std::string& fileName);
     std::shared_ptr<Font> LoadFont(const std::string& fileName);
+    std::shared_ptr<Sound> LoadSound(const std::string& fileName);
+
+    void PlaySound(std::shared_ptr<Sound> sound);
 
 private:
     SDL_Window *m_sdlWindow;

@@ -47,6 +47,8 @@ void SDLRenderer::Initialize()
         exit(1);
     }
 
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+
     // Create the SDL Window
     m_sdlWindow = SDL_CreateWindow(WINDOW_TITLE.c_str(),
                                    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -160,7 +162,7 @@ std::shared_ptr<Texture> SDLRenderer::LoadTexture(const std::string &fileName)
 {
     SDL_Log("Loading texture: %s", fileName.c_str());
 
-    SDL_Texture* tex = IMG_LoadTexture(m_sdlRenderer, fileName.c_str());
+    SDL_Texture *tex = IMG_LoadTexture(m_sdlRenderer, fileName.c_str());
 
     if (tex == nullptr)
     {
@@ -181,4 +183,15 @@ std::shared_ptr<Font> SDLRenderer::LoadFont(const std::string &fileName)
     }
 
     return std::make_shared<Font>(font);
+}
+
+std::shared_ptr<Sound> SDLRenderer::LoadSound(const std::string &fileName)
+{
+    Mix_Chunk *m = Mix_LoadWAV(fileName.c_str());
+    return std::make_shared<Sound>(m);
+}
+
+void SDLRenderer::PlaySound(std::shared_ptr<Sound> sound)
+{
+    Mix_PlayChannel(-1, sound->GetChunk(), 0);
 }

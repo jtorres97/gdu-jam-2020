@@ -72,4 +72,10 @@ private:
 
     bool m_menuButtonDownLast = false;
     bool m_modeSwitch = false;
+
+    // Sounds
+    std::shared_ptr<Sound> SuccessSound;
+    std::shared_ptr<Sound> FailSound;
+    std::shared_ptr<Sound> ClickSound;
+    std::shared_ptr<Sound> SelectSound;
 };
