@@ -14,6 +14,8 @@ void Game::Initialize()
 {
     SDL_Log("Initializing game...", SDL_LOG_PRIORITY_INFO);
 
+    m_DB.Open();
+
     m_renderer.Initialize();
 
     // Load assets
@@ -164,6 +166,13 @@ void Game::Update()
             else
             {
                 m_state.status = GameStatus::GAME_OVER;
+
+                if (m_state.score > m_state.bestScore)
+                {
+                    // Update best score
+                    m_state.bestScore = m_state.score;
+                    m_DB.AddScore(static_cast<int>(m_selectedDifficulty), m_state.score);
+                }
             }
 
             e->Deactivate();
@@ -224,11 +233,8 @@ void Game::Cleanup()
 
 void Game::Reset()
 {
-    if (m_state.score > m_state.bestScore)
-    {
-        // Update best score
-        m_state.bestScore = m_state.score;
-    }
+    m_state.score = 0;
+    m_state.bestScore = m_DB.GetHighScore(static_cast<int>(m_selectedDifficulty));
 
     m_fireTimer.SetTimeout(1000);
     m_fireTimer.Reset();
