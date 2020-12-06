@@ -2,7 +2,7 @@
 
 #include "Entity.h"
 #include "Timer.h"
-#include "Texture.h"
+#include "Animation.h"
 
 class Player : public Entity
 {
@@ -12,11 +12,17 @@ public:
     void Update(GameState &state) override;
     void Render(SDLRenderer &renderer) override;
 
-    void SetMainTexture(std::shared_ptr<Texture> mainTexture);
+    void SetRightAnimation(std::shared_ptr<Animation> animation);
+    void SetLeftAnimation(std::shared_ptr<Animation> animation);
+    void SetUpAnimation(std::shared_ptr<Animation> animation);
+    void SetDownAnimation(std::shared_ptr<Animation> animation);
 
     float GetRotation();
 
 protected:
     float m_rotation = 0.0f;
-    std::shared_ptr<Texture> m_mainTexture;
+    std::shared_ptr<Animation> m_rightAnimation;
+    std::shared_ptr<Animation> m_leftAnimation;
+    std::shared_ptr<Animation> m_upAnimation;
+    std::shared_ptr<Animation> m_downAnimation;
 };

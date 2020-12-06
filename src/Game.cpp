@@ -4,6 +4,11 @@
 
 #include <algorithm>
 
+std::shared_ptr<Animation> CreateVirusAnimation(std::shared_ptr<Texture> spriteSheet)
+{
+    return std::make_shared<Animation>(spriteSheet, 8, 28, 28, 80, false);
+}
+
 Game::Game() : m_cleanupTimer(5000), m_fireTimer(1000)
 {
     m_cleanupTimer.Reset();
@@ -21,21 +26,24 @@ void Game::Initialize()
     // Load fonts and textures
     m_UIFont = m_renderer.LoadFont("assets/EXEPixelPerfect.ttf");
     m_overlayTexture = m_renderer.LoadTexture("assets/overlay.png");
-    m_enemyTexture = m_renderer.LoadTexture("assets/enemy.png");
+    m_enemyTexture = m_renderer.LoadTexture("assets/virus.png");
     m_scoreFrameTexture = m_renderer.LoadTexture("assets/score_frame.png");
     auto playerTexture = m_renderer.LoadTexture("assets/player.png");
 
     // load animations
-    m_buttonCasualAnimation = Animation(m_renderer.LoadTexture("assets/button_easy.png"), 2, 47, 12, 0, false);
-    m_buttonNormalAnimation = Animation(m_renderer.LoadTexture("assets/button_normal.png"), 2, 47, 12, 0, false);
-    m_buttonInsaneAnimation = Animation(m_renderer.LoadTexture("assets/button_insane.png"), 2, 47, 12, 0, false);
-    m_buttonExitAnimation = Animation(m_renderer.LoadTexture("assets/button_exit.png"), 2, 33, 12, 0, false);
-    m_buttonExitLargeAnimation = Animation(m_renderer.LoadTexture("assets/button_exit_large.png"), 2, 47, 12, 0, false);
-    m_buttonRetryAnimation = Animation(m_renderer.LoadTexture("assets/button_retry.png"), 2, 47, 12, 0, false);
+    m_buttonCasualAnimation = Animation(m_renderer.LoadTexture("assets/button_easy.png"), 2, 47 * 4, 12 * 4, 0, false);
+    m_buttonNormalAnimation = Animation(m_renderer.LoadTexture("assets/button_normal.png"), 2, 47 * 4, 12 * 4, 0, false);
+    m_buttonInsaneAnimation = Animation(m_renderer.LoadTexture("assets/button_insane.png"), 2, 47 * 4, 12 * 4, 0, false);
+    m_buttonExitAnimation = Animation(m_renderer.LoadTexture("assets/button_exit.png"), 2, 33 * 4, 12 * 4, 0, false);
+    m_buttonExitLargeAnimation = Animation(m_renderer.LoadTexture("assets/button_exit_large.png"), 2, 47 * 4, 12 * 4, 0, false);
+    m_buttonRetryAnimation = Animation(m_renderer.LoadTexture("assets/button_retry.png"), 2, 47 * 4, 12 * 4, 0, false);
 
     // Add player
     m_playerOne = std::make_shared<Player>();
-    m_playerOne->SetMainTexture(playerTexture);
+    m_playerOne->SetRightAnimation(std::make_shared<Animation>(m_renderer.LoadTexture("assets/player_right.png"), 3, 28, 28, 150, true));
+    m_playerOne->SetLeftAnimation(std::make_shared<Animation>(m_renderer.LoadTexture("assets/player_left.png"), 3, 28, 28, 150, true));
+    m_playerOne->SetUpAnimation(std::make_shared<Animation>(m_renderer.LoadTexture("assets/player_up.png"), 3, 28, 28, 150, true));
+    m_playerOne->SetDownAnimation(std::make_shared<Animation>(m_renderer.LoadTexture("assets/player_down.png"), 3, 28, 28, 150, true));
 
     Reset();
 }
@@ -266,8 +274,7 @@ void Game::Update()
 
             m_lastDirection = dir;
 
-            e = std::make_shared<Enemy>(p);
-            e->SetMainTexture(m_enemyTexture);
+            e = std::make_shared<Enemy>(p, CreateVirusAnimation(m_enemyTexture));
             e->direction = dir;
 
             m_enemies.push_back(e);
@@ -328,21 +335,21 @@ void Game::Render()
         // TODO: Render title
 
         // Render buttons
-        m_buttonCasualAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 57 * TEXTURE_SCALE);
-        m_buttonNormalAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 42 * TEXTURE_SCALE);
-        m_buttonInsaneAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 27 * TEXTURE_SCALE);
-        m_buttonExitAnimation.Render(m_renderer, 35 * TEXTURE_SCALE, 10 * TEXTURE_SCALE);
+        m_buttonCasualAnimation.Render(m_renderer, 18 * TEXTURE_SCALE * 4, 57 * TEXTURE_SCALE * 4);
+        m_buttonNormalAnimation.Render(m_renderer, 18 * TEXTURE_SCALE * 4, 42 * TEXTURE_SCALE * 4);
+        m_buttonInsaneAnimation.Render(m_renderer, 18 * TEXTURE_SCALE * 4, 27 * TEXTURE_SCALE * 4);
+        m_buttonExitAnimation.Render(m_renderer, 35 * TEXTURE_SCALE * 4, 10 * TEXTURE_SCALE * 4);
 
         // Render high scores
-        Rectangle easyRect = {68 * TEXTURE_SCALE, 57 * TEXTURE_SCALE, 15 * TEXTURE_SCALE, 12 * TEXTURE_SCALE};
+        Rectangle easyRect = {68 * TEXTURE_SCALE * 4, 57 * TEXTURE_SCALE * 4, 15 * TEXTURE_SCALE * 4, 12 * TEXTURE_SCALE * 4};
         m_renderer.RenderWholeTexture(m_scoreFrameTexture, easyRect);
         m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreEasy), easyRect, FG_COLOR);
 
-        Rectangle normalRect = {68 * TEXTURE_SCALE, 42 * TEXTURE_SCALE, 15 * TEXTURE_SCALE, 12 * TEXTURE_SCALE};
+        Rectangle normalRect = {68 * TEXTURE_SCALE * 4, 42 * TEXTURE_SCALE * 4, 15 * TEXTURE_SCALE * 4, 12 * TEXTURE_SCALE * 4};
         m_renderer.RenderWholeTexture(m_scoreFrameTexture, normalRect);
         m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreNormal), normalRect, FG_COLOR);
 
-        Rectangle insaneRect = {68 * TEXTURE_SCALE, 27 * TEXTURE_SCALE, 15 * TEXTURE_SCALE, 12 * TEXTURE_SCALE};
+        Rectangle insaneRect = {68 * TEXTURE_SCALE * 4, 27 * TEXTURE_SCALE * 4, 15 * TEXTURE_SCALE * 4, 12 * TEXTURE_SCALE * 4};
         m_renderer.RenderWholeTexture(m_scoreFrameTexture, insaneRect);
         m_renderer.RenderFont(m_UIFont, std::to_string(m_state.bestScoreInsane), insaneRect, FG_COLOR);
     }
@@ -351,9 +358,9 @@ void Game::Render()
         m_renderer.RenderWholeTexture(m_overlayTexture, {0, 0, 800, 800});
 
         // Render score
-        float w = 120;
-        float h = 60;
-        float offset = 20;
+        float w = 160;
+        float h = 40;
+        float offset = 10;
         Rectangle scoreRect = {offset, WORLDSIZE_H - h - offset, w, h};
         m_renderer.RenderFont(m_UIFont, "SCORE: " + std::to_string(m_state.score), scoreRect, BG_COLOR);
 
@@ -362,8 +369,8 @@ void Game::Render()
 
         // Render buttons
 
-        m_buttonRetryAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 50 * TEXTURE_SCALE);
-        m_buttonExitLargeAnimation.Render(m_renderer, 18 * TEXTURE_SCALE, 25 * TEXTURE_SCALE);
+        m_buttonRetryAnimation.Render(m_renderer, 400 - 188, 400 + 48);
+        m_buttonExitLargeAnimation.Render(m_renderer, 400 - 188, 400 - 44 - 40);
     }
     else if (m_state.status == GameStatus::RUNNING)
     {
@@ -377,9 +384,9 @@ void Game::Render()
         m_renderer.RenderWholeTexture(m_overlayTexture, {0, 0, 800, 800});
 
         // Render score
-        float w = 120;
-        float h = 60;
-        float offset = 20;
+        float w = 160;
+        float h = 40;
+        float offset = 10;
         Rectangle scoreRect = {offset, WORLDSIZE_H - h - offset, w, h};
         m_renderer.RenderFont(m_UIFont, "SCORE: " + std::to_string(m_state.score), scoreRect, BG_COLOR);
 

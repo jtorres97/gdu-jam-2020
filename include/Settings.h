@@ -8,4 +8,5 @@ const float WORLDSIZE_H = 800;
 const int RESOLUTION_W = 800;
 const int RESOLUTION_H = 800;
 
-const int TEXTURE_SCALE = 8;
+const int TEXTURE_SCALE = 2;
+const int UI_SCALE = 8;

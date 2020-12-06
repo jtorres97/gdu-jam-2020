@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Entity.h"
-#include "Texture.h"
+#include "Animation.h"
 #include "Timer.h"
 
-const int ENEMY_SIZE = 8;
+const int ENEMY_SIZE = 28;
 
 enum class EnemyDirection
 {
@@ -19,14 +19,12 @@ class Enemy : public Entity
 {
 public:
     EnemyDirection direction;
-    Enemy(Point position);
+    Enemy(Point position, std::shared_ptr<Animation> animation);
 
     void Update(GameState& state) override;
     void Render(SDLRenderer& renderer) override;
 
-    void SetMainTexture(std::shared_ptr<Texture> mainTexture);
-    
 protected:
-    std::shared_ptr<Texture> m_mainTexture;
+    std::shared_ptr<Animation> m_mainAnimation;
     float m_moveSpeed = 8.0f;
 };

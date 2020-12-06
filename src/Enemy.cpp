@@ -1,9 +1,11 @@
 #include "Enemy.h"
 
-Enemy::Enemy(Point position) : Entity()
+Enemy::Enemy(Point position, std::shared_ptr<Animation> animation) : Entity()
 {
     m_position = position;
     m_bound = { ENEMY_SIZE * TEXTURE_SCALE, ENEMY_SIZE * TEXTURE_SCALE };
+
+    m_mainAnimation = animation;
 }
 
 void Enemy::Update(GameState &state)
@@ -17,6 +19,8 @@ void Enemy::Update(GameState &state)
     // Chase player
     m_velocity = vectorToPlayer.Scale(m_moveSpeed);
     m_position = m_position + m_velocity.GetPoint();
+
+    m_mainAnimation->Update();
 }
 
 void Enemy::Render(SDLRenderer &renderer)
@@ -24,10 +28,5 @@ void Enemy::Render(SDLRenderer &renderer)
     if (!m_isActive)
         return;
 
-    renderer.RenderWholeTexture(m_mainTexture, GetHitBox());
-}
-
-void Enemy::SetMainTexture(std::shared_ptr<Texture> mainTexture)
-{
-    m_mainTexture = mainTexture;
+    m_mainAnimation->Render(renderer, m_position.x - m_bound.w / 2, m_position.y - m_bound.h / 2);
 }
