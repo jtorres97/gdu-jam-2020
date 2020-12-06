@@ -1,6 +1,10 @@
 #include "Animation.h"
 #include "Settings.h"
 
+Animation::Animation() : m_timer(100)
+{
+}
+
 Animation::Animation(std::shared_ptr<Texture> spriteSheet, int frameCount, int frameWidth, int frameHeight, int frameTime, bool pingPong)
     : m_spriteSheet(spriteSheet), m_frameCount(frameCount), m_frameWidth(frameWidth), m_frameHeight(frameHeight), m_timer(frameTime), m_pingPong(pingPong)
 {
@@ -42,7 +46,7 @@ void Animation::Update()
     }
 }
 
-void Animation::Render(std::shared_ptr<SDLRenderer> renderer, int x, int y)
+void Animation::Render(SDLRenderer &renderer, int x, int y)
 {
     Rectangle srcRect = {
         0,
@@ -55,7 +59,12 @@ void Animation::Render(std::shared_ptr<SDLRenderer> renderer, int x, int y)
                           float(m_frameWidth * TEXTURE_SCALE),
                           float(m_frameHeight * TEXTURE_SCALE)};
 
-    renderer->RenderTextureRotate(m_spriteSheet, srcRect, destRect, m_rotation * TO_DEGS, m_center);
+    renderer.RenderTextureRotate(m_spriteSheet, srcRect, destRect, m_rotation * TO_DEGS, m_center);
+}
+
+void Animation::SetFrame(int frame)
+{
+    m_currentFrame = frame;
 }
 
 void Animation::SetOffset(int x, int y)

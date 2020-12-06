@@ -8,6 +8,7 @@
 enum class GameStatus
 {
     UNKNOWN,
+    MENU,
     RUNNING,
     GAME_OVER
 };

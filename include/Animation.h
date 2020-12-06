@@ -9,9 +9,12 @@
 class Animation
 {
 public:
+    Animation();
     Animation(std::shared_ptr<Texture> spriteSheet, int frameCount, int frameWidth, int frameHeight, int frameTime, bool pingPong = false);
     void Update();
-    void Render(std::shared_ptr<SDLRenderer> renderer, int x, int y);
+    void Render(SDLRenderer &renderer, int x, int y);
+
+    void SetFrame(int frame);
 
     void SetOffset(int x, int y);
     void SetCenter(Point center);
