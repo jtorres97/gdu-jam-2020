@@ -44,11 +44,12 @@ void Game::Initialize()
     m_negativeSound = m_renderer.LoadSFX("assets/negative.wav");
     m_clickSound = m_renderer.LoadSFX("assets/move.wav");
     m_selectSound = m_renderer.LoadSFX("assets/select.wav");
+    m_highScoreSound = m_renderer.LoadSFX("assets/highscore.wav");
 
     // load music
-    m_slowMusic = m_renderer.LoadMusic("assets/easy_theme.mp3");
-    m_ediumMusic = m_renderer.LoadMusic("assets/normal_theme.mp3");
-    m_fastMusic = m_renderer.LoadMusic("assets/insane_theme.mp3");
+    m_easyMusic = m_renderer.LoadMusic("assets/easy_theme.mp3");
+    m_mediumMusic = m_renderer.LoadMusic("assets/normal_theme.mp3");
+    m_insaneMusic = m_renderer.LoadMusic("assets/insane_theme.mp3");
 
     // Add player
     m_playerOne = std::make_shared<Player>();
@@ -59,7 +60,7 @@ void Game::Initialize()
 
     Reset();
 
-    m_renderer.PlayMusic(m_slowMusic);
+    m_renderer.PlayMusic(m_easyMusic);
 }
 
 void Game::Run()
@@ -186,7 +187,7 @@ void Game::Update()
                 Reset();
                 m_state.status = GameStatus::RUNNING;
 
-                m_renderer.PlayMusic(m_slowMusic);
+                m_renderer.PlayMusic(m_easyMusic);
             }
             else if (m_mainMenuSelectedButtonIndex == 1)
             {
@@ -202,7 +203,7 @@ void Game::Update()
                 Reset();
                 m_state.status = GameStatus::RUNNING;
 
-                m_renderer.PlayMusic(m_ediumMusic);
+                m_renderer.PlayMusic(m_mediumMusic);
             }
             else if (m_mainMenuSelectedButtonIndex == 2)
             {
@@ -218,7 +219,7 @@ void Game::Update()
                 Reset();
                 m_state.status = GameStatus::RUNNING;
 
-                m_renderer.PlayMusic(m_fastMusic);
+                m_renderer.PlayMusic(m_insaneMusic);
             }
             else if (m_mainMenuSelectedButtonIndex == 3)
             {
@@ -373,10 +374,16 @@ void Game::Update()
                     m_renderer.PlaySFX(m_positiveSound);
 
                     m_state.score++;
+
+                    if (!m_highScoreFlag && m_state.bestScore != 0 && m_state.score > m_state.bestScore)
+                    {
+                        m_renderer.PlaySFX(m_highScoreSound);
+                        m_highScoreFlag = true;
+                    }
                 }
                 else
                 {
-                    m_renderer.PlayMusic(m_slowMusic);
+                    m_renderer.PlayMusic(m_easyMusic);
                     m_renderer.PlaySFX(m_negativeSound);
 
                     m_state.status = GameStatus::GAME_OVER;
@@ -498,6 +505,8 @@ void Game::Cleanup()
 
 void Game::Reset()
 {
+    m_highScoreFlag = false;
+
     m_state.score = 0;
     m_state.bestScore = m_DB.GetHighScore(static_cast<int>(m_selectedDifficulty.difficulty));
 

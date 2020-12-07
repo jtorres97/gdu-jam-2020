@@ -98,14 +98,16 @@ private:
 
     bool m_menuButtonDownLast = false;
     bool m_modeSwitch = false;
+    bool m_highScoreFlag = false;
 
     // Sounds
     std::shared_ptr<Sound> m_positiveSound;
     std::shared_ptr<Sound> m_negativeSound;
     std::shared_ptr<Sound> m_clickSound;
     std::shared_ptr<Sound> m_selectSound;
+    std::shared_ptr<Sound> m_highScoreSound;
 
-    std::shared_ptr<Music> m_slowMusic;
-    std::shared_ptr<Music> m_ediumMusic;
-    std::shared_ptr<Music> m_fastMusic;
+    std::shared_ptr<Music> m_easyMusic;
+    std::shared_ptr<Music> m_mediumMusic;
+    std::shared_ptr<Music> m_insaneMusic;
 };
