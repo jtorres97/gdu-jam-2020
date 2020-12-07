@@ -15,11 +15,35 @@
 const double TICK_RATE = 60;
 const auto TIME_PER_TICK = std::chrono::duration<double>(1.0 / TICK_RATE);
 
+const int EASY_STARTING_RATE = 1200;
+const float EASY_MOVE_SPEED = 6.0;
+const int EASY_RATE_INCREASE = 25;
+const int EASY_RATE_MIN = 300;
+
+const int NORMAL_STARTING_RATE = 900;
+const float NORMAL_MOVE_SPEED = 8.0;
+const int NORMAL_RATE_INCREASE = 50;
+const int NORMAL_RATE_MIN = 250;
+
+const int INSANE_STARTING_RATE = 800;
+const float INSANE_MOVE_SPEED = 12.0;
+const int INSANE_RATE_INCREASE = 75;
+const int INSANE_RATE_MIN = 200;
+
 enum class GameDifficulty
 {
     EASY = 0,
     NORMAL = 1,
     INSANE = 2,
+};
+
+struct DifficultySettings
+{
+    GameDifficulty difficulty;
+    int startingRate;
+    float moveSpeed;
+    int rateIncrease;
+    int rateTimeoutMin;
 };
 
 class Game
@@ -52,7 +76,7 @@ private:
     std::shared_ptr<Player> m_playerOne;
     std::vector<std::shared_ptr<Enemy>> m_enemies;
 
-    GameDifficulty m_selectedDifficulty = GameDifficulty::NORMAL;
+    DifficultySettings m_selectedDifficulty;
 
     int startingTimeout = 1000;
     Timer m_fireTimer;
@@ -60,7 +84,7 @@ private:
     EnemyDirection m_lastDirection = EnemyDirection::UNKNOWN;
 
     // UI stuff
-    Animation m_buttonCasualAnimation;
+    Animation m_buttonEasyAnimation;
     Animation m_buttonNormalAnimation;
     Animation m_buttonInsaneAnimation;
     Animation m_buttonExitAnimation;

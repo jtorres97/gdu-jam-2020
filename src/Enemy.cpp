@@ -1,9 +1,11 @@
 #include "Enemy.h"
 
-Enemy::Enemy(Point position, std::shared_ptr<Animation> animation) : Entity()
+Enemy::Enemy(Point position, float speed, std::shared_ptr<Animation> animation) : Entity()
 {
     m_position = position;
     m_bound = { ENEMY_SIZE * TEXTURE_SCALE, ENEMY_SIZE * TEXTURE_SCALE };
+
+    m_moveSpeed = speed;
 
     m_mainAnimation = animation;
 }
