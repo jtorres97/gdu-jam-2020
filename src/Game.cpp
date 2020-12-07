@@ -383,7 +383,6 @@ void Game::Update()
                 }
                 else
                 {
-                    m_renderer.PlayMusic(m_easyMusic);
                     m_renderer.PlaySFX(m_negativeSound);
 
                     m_state.status = GameStatus::GAME_OVER;
