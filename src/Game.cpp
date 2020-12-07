@@ -336,13 +336,13 @@ void Game::Update()
             // Update rate as level increases
             if (m_state.score > 0 && m_state.score % 5 == 0)
             {
-                if (m_selectedDifficulty.startingRate <= m_selectedDifficulty.rateTimeoutMin)
+                if (m_selectedDifficulty.startingRate >= m_selectedDifficulty.rateTimeoutMin + m_selectedDifficulty.rateIncrease)
                 {
-                    m_selectedDifficulty.startingRate = m_selectedDifficulty.rateTimeoutMin;
+                    m_selectedDifficulty.startingRate -= m_selectedDifficulty.rateIncrease;
                 }
                 else
                 {
-                    m_selectedDifficulty.startingRate -= m_selectedDifficulty.rateIncrease;
+                    m_selectedDifficulty.startingRate = m_selectedDifficulty.rateTimeoutMin;
                 }
                 
                 m_fireTimer.SetTimeout(m_selectedDifficulty.startingRate);

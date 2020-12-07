@@ -15,20 +15,20 @@
 const double TICK_RATE = 60;
 const auto TIME_PER_TICK = std::chrono::duration<double>(1.0 / TICK_RATE);
 
-const int EASY_STARTING_RATE = 1200;
-const float EASY_MOVE_SPEED = 6.0;
+const int EASY_STARTING_RATE = 900;
+const float EASY_MOVE_SPEED = 3.0;
 const int EASY_RATE_INCREASE = 25;
-const int EASY_RATE_MIN = 300;
+const int EASY_RATE_MIN = 400;
 
-const int NORMAL_STARTING_RATE = 900;
-const float NORMAL_MOVE_SPEED = 8.0;
-const int NORMAL_RATE_INCREASE = 50;
-const int NORMAL_RATE_MIN = 250;
+const int NORMAL_STARTING_RATE = 800;
+const float NORMAL_MOVE_SPEED = 4.0;
+const int NORMAL_RATE_INCREASE = 30;
+const int NORMAL_RATE_MIN = 300;
 
-const int INSANE_STARTING_RATE = 800;
-const float INSANE_MOVE_SPEED = 12.0;
-const int INSANE_RATE_INCREASE = 75;
-const int INSANE_RATE_MIN = 200;
+const int INSANE_STARTING_RATE = 700;
+const float INSANE_MOVE_SPEED = 5.0;
+const int INSANE_RATE_INCREASE = 50;
+const int INSANE_RATE_MIN = 250;
 
 enum class GameDifficulty
 {
