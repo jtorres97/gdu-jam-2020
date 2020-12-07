@@ -283,6 +283,8 @@ void Game::Update()
                 // Handle exit
                 m_state.status = GameStatus::MENU;
                 m_modeSwitch = true;
+
+                m_renderer.PlayMusic(m_easyMusic);
             }
             Reset();
         }
@@ -454,10 +456,10 @@ void Game::Render()
         float h = 40;
         float offset = 10;
         Rectangle scoreRect = {offset, WORLDSIZE_H - h - offset, w, h};
-        m_renderer.RenderFont(m_UIFont, "SCORE: " + std::to_string(m_state.score), scoreRect, BG_COLOR);
+        m_renderer.RenderFont(m_UIFont, "SCORE: " + std::to_string(m_state.score), scoreRect, { 0x2F, 0x38, 0x0F, 0xFF });
 
         Rectangle bestScoreRect = {WORLDSIZE_W - w - offset, WORLDSIZE_H - h - offset, w, h};
-        m_renderer.RenderFont(m_UIFont, "BEST: " + std::to_string(m_state.bestScore), bestScoreRect, BG_COLOR);
+        m_renderer.RenderFont(m_UIFont, "BEST: " + std::to_string(m_state.bestScore), bestScoreRect, { 0x2F, 0x38, 0x0F, 0xFF });
 
         // Render buttons
 
@@ -480,10 +482,10 @@ void Game::Render()
         float h = 40;
         float offset = 10;
         Rectangle scoreRect = {offset, WORLDSIZE_H - h - offset, w, h};
-        m_renderer.RenderFont(m_UIFont, "SCORE: " + std::to_string(m_state.score), scoreRect, BG_COLOR);
+        m_renderer.RenderFont(m_UIFont, "SCORE: " + std::to_string(m_state.score), scoreRect, { 0x2F, 0x38, 0x0F, 0xFF });
 
         Rectangle bestScoreRect = {WORLDSIZE_W - w - offset, WORLDSIZE_H - h - offset, w, h};
-        m_renderer.RenderFont(m_UIFont, "BEST: " + std::to_string(m_state.bestScore), bestScoreRect, BG_COLOR);
+        m_renderer.RenderFont(m_UIFont, "BEST: " + std::to_string(m_state.bestScore), bestScoreRect, { 0x2F, 0x38, 0x0F, 0xFF });
     }
 
     m_renderer.Present();
